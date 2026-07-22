@@ -19,7 +19,7 @@ class Home extends StatelessWidget {
           child:  Container(
             width: 150,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(11),
               border: Border.all(
                 color: Colors.grey,
                 width: 1
@@ -40,7 +40,7 @@ class Home extends StatelessWidget {
           child: Container(
              width: 150,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(11),
               border: Border.all(
                 color: Colors.grey
               )
