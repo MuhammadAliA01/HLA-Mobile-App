@@ -36,6 +36,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_secure_storage: ^9.2.2
+ 
 
 dev_dependencies:
   flutter_test:
@@ -59,11 +60,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  assets:
-    - assets/imgs/
 
 
+
   assets:
+   - assets/imgs/
    - assets/icons/clock_in.png
    - assets/icons/clock_out.png
 
