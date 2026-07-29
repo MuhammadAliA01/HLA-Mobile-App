@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
-class ClockInOutScreen extends StatelessWidget {
+import 'dart:async';
+import 'package:intl/intl.dart';
+
+class ClockInOutScreen extends StatefulWidget {
   const ClockInOutScreen({super.key});
 
   @override
+  State<ClockInOutScreen> createState() => _ClockInOutScreenState();
+}
+
+class _ClockInOutScreenState extends State<ClockInOutScreen> {
+  DateTime _currentTime = DateTime.now();
+
+  @override
+  void initState() {              
+    super.initState();
+    Timer.periodic(const Duration(seconds: 1), (timer) {   // fix: proper callback function
+      setState(() {
+        _currentTime = DateTime.now();
+      });
+    });
+  }
+
+  @override                      
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -10,7 +30,6 @@ class ClockInOutScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-
           Container( // profile card
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
@@ -39,13 +58,13 @@ class ClockInOutScreen extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Text(
-                  '08:31:45',
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                  '${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
+                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                 ),
-                Text('Tuesday, 28 July 2026'),
+                Text(DateFormat('EEEE, d MMMM yyyy').format(_currentTime)),
               ],
             ),
           ),
@@ -113,9 +132,8 @@ class ClockInOutScreen extends StatelessWidget {
               ],
             ),
           ),
-
-        ], 
-      ), 
-    ); 
+        ],
+      ),
+    );
   }
 }
