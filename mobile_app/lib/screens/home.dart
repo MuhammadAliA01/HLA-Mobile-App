@@ -1,9 +1,36 @@
 import 'package:flutter/material.dart';
+import 'account/login.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class Home extends StatelessWidget {
+
+
+class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final storage = const FlutterSecureStorage();
+  @override
+
+void initState(){
+  super.initState();
+  checkLogin();
+}
+
+Future<void> checkLogin() async{
+
+  final token = await storage.read(key: "token");
+
+  if (token == null){
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
+  }
+}
+
+
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -53,9 +80,9 @@ class Home extends StatelessWidget {
               ],
             ),
           ),
-         )
+         ),
 
-          
+        
         ],
       ),
       ) 
