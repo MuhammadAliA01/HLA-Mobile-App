@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/home.dart';
 import 'screens/calendar.dart';
+import 'screens/clock_in_out.dart'; 
 
 
 void main(){
@@ -24,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   final List<Widget> pages = const [
     Home(),
     Calendar(),
+    ClockInOutScreen(),
   ];
 
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class _MyAppState extends State<MyApp> {
           setState(() {
             SelectedIndex = index;
           });
-        } ,items: [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'), BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: 'Calendar'), BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Alerts')]
+        } ,items: [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'), BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: 'Calendar'), BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Alerts'),BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Clock In/Out'),]
       ),
       appBar: AppBar(backgroundColor: Colors.blue, actions: [IconButton(onPressed: () {}, icon: Icon(Icons.account_circle, size: 35,))],),
       
