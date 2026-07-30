@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ClockInOutScreen extends StatefulWidget {
   const ClockInOutScreen({super.key});
@@ -11,18 +12,59 @@ class ClockInOutScreen extends StatefulWidget {
 
 class _ClockInOutScreenState extends State<ClockInOutScreen> {
   DateTime _currentTime = DateTime.now();
+  Timer? _timer;
 
   @override
-  void initState() {              
+  void initState() {
     super.initState();
-    Timer.periodic(const Duration(seconds: 1), (timer) {   // fix: proper callback function
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _currentTime = DateTime.now();
       });
     });
   }
 
-  @override                      
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  //  current GPS position
+  Future<Position?> getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return null;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return null;
+      }
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  // within range of the school
+  Future<bool> isWithinSchoolArea(Position position) async {
+    const double schoolLatitude = -29.8525;  // dut is being used now for testing purposes
+    const double schoolLongitude = 31.0036;
+    const double allowedRadiusMeters = 200;
+
+    double distance = Geolocator.distanceBetween(
+      schoolLatitude,
+      schoolLongitude,
+      position.latitude,
+      position.longitude,
+    );
+
+    return distance <= allowedRadiusMeters;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -75,7 +117,22 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  Position? position = await getCurrentLocation();
+
+                  if (position == null) {
+                    debugPrint('Could not get location');
+                    return;
+                  }
+
+                  bool withinSchool = await isWithinSchoolArea(position);
+
+                  if (withinSchool) {
+                    debugPrint('Within school area — proceed to camera');
+                  } else {
+                    debugPrint('Outside school area — blocked');
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -91,7 +148,22 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
               ),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  Position? position = await getCurrentLocation();
+
+                  if (position == null) {
+                    debugPrint('Could not get location');
+                    return;
+                  }
+
+                  bool withinSchool = await isWithinSchoolArea(position);
+
+                  if (withinSchool) {
+                    debugPrint('Within school area — proceed to camera');
+                  } else {
+                    debugPrint('Outside school area — blocked');
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
