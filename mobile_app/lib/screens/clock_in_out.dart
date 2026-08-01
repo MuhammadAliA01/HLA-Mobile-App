@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ClockInOutScreen extends StatefulWidget {
   const ClockInOutScreen({super.key});
@@ -30,6 +31,13 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
     super.dispose();
   }
 
+  Future<XFile?> takePhoto() async 
+  {
+  final ImagePicker picker = ImagePicker();
+  final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+  return photo;
+  }
+
   //  current GPS position
   Future<Position?> getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -52,7 +60,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
   Future<bool> isWithinSchoolArea(Position position) async {
     const double schoolLatitude = -29.8525;  // dut is being used now for testing purposes
     const double schoolLongitude = 31.0036;
-    const double allowedRadiusMeters = 200;
+    const double allowedRadiusMeters = 2000000;  // This was changed from 200 => 2000000 for testing as well
 
     double distance = Geolocator.distanceBetween(
       schoolLatitude,
@@ -117,7 +125,8 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () async {
+                onPressed: () async 
+                {
                   Position? position = await getCurrentLocation();
 
                   if (position == null) {
@@ -127,12 +136,21 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
                   bool withinSchool = await isWithinSchoolArea(position);
 
-                  if (withinSchool) {
-                    debugPrint('Within school area — proceed to camera');
-                  } else {
+                  if (!withinSchool) {
                     debugPrint('Outside school area — blocked');
+                    return;
+                  }
+
+                  debugPrint('Within school area — opening camera');
+                  XFile? photo = await takePhoto();
+
+                  if (photo != null) {
+                    debugPrint('Photo taken: ${photo.path}');
+                  } else {
+                    debugPrint('No photo taken');
                   }
                 },
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -148,7 +166,8 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
               ),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: () async {
+                onPressed: () async 
+                {
                   Position? position = await getCurrentLocation();
 
                   if (position == null) {
@@ -158,10 +177,18 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
                   bool withinSchool = await isWithinSchoolArea(position);
 
-                  if (withinSchool) {
-                    debugPrint('Within school area — proceed to camera');
+                  if (!withinSchool) {
+                    debugPrint(' Outside school area — blocked');
+                    return;
+                  }
+
+                  debugPrint('Within school area — opening camera');
+                  XFile? photo = await takePhoto();
+
+                  if (photo != null) {
+                    debugPrint('Photo taken: ${photo.path}');
                   } else {
-                    debugPrint('Outside school area — blocked');
+                    debugPrint('No photo taken');
                   }
                 },
                 style: ElevatedButton.styleFrom(
