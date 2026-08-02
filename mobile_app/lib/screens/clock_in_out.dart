@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ClockInOutScreen extends StatefulWidget {
   const ClockInOutScreen({super.key});
@@ -14,6 +16,8 @@ class ClockInOutScreen extends StatefulWidget {
 class _ClockInOutScreenState extends State<ClockInOutScreen> {
   DateTime _currentTime = DateTime.now();
   Timer? _timer;
+
+   static const String baseUrl = 'http://192.168.0.213:5115';
 
   @override
   void initState() {
@@ -60,7 +64,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
   Future<bool> isWithinSchoolArea(Position position) async {
     const double schoolLatitude = -29.8525;  // dut is being used now for testing purposes
     const double schoolLongitude = 31.0036;
-    const double allowedRadiusMeters = 2000000;  // This was changed from 200 => 2000000 for testing as well
+    const double allowedRadiusMeters = 2000000;  // This was changed from 200 => 2000000 for testing as
 
     double distance = Geolocator.distanceBetween(
       schoolLatitude,
@@ -71,6 +75,43 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
     return distance <= allowedRadiusMeters;
   }
+
+  Future<void> sendClockIn(Position position) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/staffattendance/ClockIn'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'staffId': 1, // TODO: replace with real logged-in staffId once login is wired in
+        'latitude': position.latitude,
+        'longitude': position.longitude,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      debugPrint('Clock-in successful: ${response.body}');
+    } else {
+      debugPrint('Clock-in failed: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  Future<void> sendClockOut(Position position) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/staffattendance/ClockOut'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'staffId': 1, // TODO: replace with real logged-in staffId once login is wired in
+        'latitude': position.latitude,
+        'longitude': position.longitude,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      debugPrint('Clock-out successful: ${response.body}');
+    } else {
+      debugPrint('Clock-out failed: ${response.statusCode} - ${response.body}');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -137,18 +178,20 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
                   bool withinSchool = await isWithinSchoolArea(position);
 
                   if (!withinSchool) {
-                    debugPrint('Outside school area — blocked');
+                    debugPrint('❌ Outside school area — blocked');
                     return;
                   }
 
-                  debugPrint('Within school area — opening camera');
+                  debugPrint('✅ Within school area — opening camera');
                   XFile? photo = await takePhoto();
 
-                  if (photo != null) {
-                    debugPrint('Photo taken: ${photo.path}');
-                  } else {
-                    debugPrint('No photo taken');
-                  }
+                  if (photo == null) 
+                    {
+                      debugPrint('No photo taken — cancelling clock in');
+                      return;
+                    }
+                  debugPrint('📸 Photo taken: ${photo.path}');
+                  await sendClockIn(position);
                 },
 
                 style: ElevatedButton.styleFrom(
@@ -185,11 +228,15 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
                   debugPrint('Within school area — opening camera');
                   XFile? photo = await takePhoto();
 
-                  if (photo != null) {
-                    debugPrint('Photo taken: ${photo.path}');
-                  } else {
-                    debugPrint('No photo taken');
+                 if (photo == null)
+                  {
+                    debugPrint('No photo taken — cancelling clock out');
+                    return;
                   }
+
+                debugPrint('📸 Photo taken: ${photo.path}');
+                await sendClockOut(position);
+
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
