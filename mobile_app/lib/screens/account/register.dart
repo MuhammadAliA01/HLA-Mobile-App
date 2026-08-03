@@ -34,7 +34,7 @@ Future<void> registerUser(String idNum, String firstName, String lastName,String
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.post(
-      Uri.parse("https://localhost:7205/api/MobileAccount/register"),
+     Uri.parse("https://localhost:7205/api/MobileAccount/register"),
       headers: {
         "Content-Type": "application/json",
       },
