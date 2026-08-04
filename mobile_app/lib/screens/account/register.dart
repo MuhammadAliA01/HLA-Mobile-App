@@ -236,12 +236,12 @@ setState(() {
             ),
             ),
 
-            ElevatedButton(onPressed: () {registerUser(typedIdnum, typedFirstname, typedLastname, typedUsername, typedEmailname, typedPassword);}, child: Text('Create Account', style: GoogleFonts.notoSansAvestan(color: Colors.white, fontSize: 20),),
+            ElevatedButton(onPressed: () {registerUser(typedIdnum, typedFirstname, typedLastname, typedUsername, typedEmailname, typedPassword);},
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 minimumSize: Size(300, 60),
                 backgroundColor: const Color(0xFF6c76cf)
-              )   
+              ), child: Text('Create Account', style: GoogleFonts.notoSansAvestan(color: Colors.white, fontSize: 20),)   
           
 
             ),

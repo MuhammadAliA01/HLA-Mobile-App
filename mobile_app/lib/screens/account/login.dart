@@ -176,12 +176,12 @@ padding: EdgeInsets.all(20),
             
 
 
-            ElevatedButton(onPressed: () { print("Button pressed"); loginUser(typedUsername, typedPassword, currentOption);}, child: Text('Login', style: GoogleFonts.notoSansAvestan(color: Colors.white, fontSize: 20),),
+            ElevatedButton(onPressed: () { print("Button pressed"); loginUser(typedUsername, typedPassword, currentOption);},
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 minimumSize: Size(300, 60),
                 backgroundColor: const Color(0xFF6c76cf)
-              )   
+              ), child: Text('Login', style: GoogleFonts.notoSansAvestan(color: Colors.white, fontSize: 20),)   
           
 
             ),
