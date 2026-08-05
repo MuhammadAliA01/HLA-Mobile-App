@@ -19,6 +19,9 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
   Timer? _timer;
   String staffName = 'Staff Name';
 
+  DateTime? _clockInTime; // when they clocked in today
+  Duration _workedDuration = Duration.zero;
+
   static const String baseUrl = 'http://192.168.0.213:5115';
 
   @override
@@ -27,9 +30,13 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _currentTime = DateTime.now();
+        if (_clockInTime != null) {
+          _workedDuration = _currentTime.difference(_clockInTime!);
+        }
       });
     });
     loadStaffName();
+    loadClockInTime();
   }
 
   @override
@@ -44,6 +51,17 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
     if (name != null) {
       setState(() {
         staffName = name;
+      });
+    }
+  }
+
+  Future<void> loadClockInTime() async {
+    const storage = FlutterSecureStorage();
+    String? saved = await storage.read(key: "clockInTime");
+    if (saved != null) {
+      setState(() {
+        _clockInTime = DateTime.parse(saved);
+        attendanceStatus = 'Clocked In';
       });
     }
   }
@@ -167,9 +185,13 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
       if (streamedResponse.statusCode == 200) {
         debugPrint('Clock-in successful: $responseBody');
+        final now = DateTime.now();
         setState(() {
           attendanceStatus = 'Clocked In';
+          _clockInTime = now;
         });
+        const storage = FlutterSecureStorage();
+        await storage.write(key: "clockInTime", value: now.toIso8601String());
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -223,7 +245,11 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
       if (streamedResponse.statusCode == 200) {
         setState(() {
           attendanceStatus = 'Clocked Out';
+          _clockInTime = null;
+          _workedDuration = Duration.zero;
         });
+        const storage = FlutterSecureStorage();
+        await storage.delete(key: "clockInTime");
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -246,6 +272,15 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
       _showError('Network error during Clock Out.');
     }
   }
+
+  String formatDuration(Duration d) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(d.inHours);
+    final minutes = twoDigits(d.inMinutes.remainder(60));
+    final seconds = twoDigits(d.inSeconds.remainder(60));
+    return '$hours:$minutes:$seconds';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -294,6 +329,25 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
           ),
 
           const SizedBox(height: 16),
+
+          if (attendanceStatus == 'Clocked In')
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  const Text('Worked today', style: TextStyle(color: Colors.grey)),
+                  Text(
+                    formatDuration(_workedDuration),
+                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
