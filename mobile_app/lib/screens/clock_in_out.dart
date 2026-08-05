@@ -22,6 +22,8 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
   DateTime? _clockInTime; // when they clocked in today
   Duration _workedDuration = Duration.zero;
 
+  String? _lastClockInDate; // yyyy-MM-dd of the last successful clock-in, so we know if today is already used
+
   static const String baseUrl = 'http://192.168.0.213:5115';
 
   @override
@@ -37,6 +39,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
     });
     loadStaffName();
     loadClockInTime();
+    loadLastClockInDate();
   }
 
   @override
@@ -64,6 +67,20 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
         attendanceStatus = 'Clocked In';
       });
     }
+  }
+
+  Future<void> loadLastClockInDate() async {
+    const storage = FlutterSecureStorage();
+    String? saved = await storage.read(key: "lastClockInDate");
+    if (saved != null) {
+      setState(() {
+        _lastClockInDate = saved;
+      });
+    }
+  }
+
+  String _todayDateString() {
+    return DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 
   Future<int?> getLoggedInStaffId() async {
@@ -136,6 +153,23 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
     );
   }
 
+  void _showAlertDialog(String message) {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clock In'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<bool> confirmClockOut() async {
     final result = await showDialog<bool>(
       context: context,
@@ -186,12 +220,15 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
       if (streamedResponse.statusCode == 200) {
         debugPrint('Clock-in successful: $responseBody');
         final now = DateTime.now();
+        final todayString = _todayDateString();
         setState(() {
           attendanceStatus = 'Clocked In';
           _clockInTime = now;
+          _lastClockInDate = todayString;
         });
         const storage = FlutterSecureStorage();
         await storage.write(key: "clockInTime", value: now.toIso8601String());
+        await storage.write(key: "lastClockInDate", value: todayString);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -209,7 +246,26 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
         }
       } else {
         debugPrint('Clock-in failed: ${streamedResponse.statusCode} - $responseBody');
-        _showError('Clock-in failed. Server returned: ${streamedResponse.statusCode}');
+        String message = 'Clock-in failed. Server returned: ${streamedResponse.statusCode}';
+        try {
+          final decoded = jsonDecode(responseBody);
+          if (decoded is Map && decoded['message'] != null) {
+            message = decoded['message'];
+          }
+        } catch (_) {
+          // couldn't parse JSON, fall back to the generic message above
+        }
+        // If the server says they already clocked in today, remember that locally too,
+        // so we don't open the camera again next time without asking.
+        if (message.toLowerCase().contains('already clocked in')) {
+          const storage = FlutterSecureStorage();
+          final todayString = _todayDateString();
+          await storage.write(key: "lastClockInDate", value: todayString);
+          setState(() {
+            _lastClockInDate = todayString;
+          });
+        }
+        _showAlertDialog(message);
       }
     } catch (e) {
       _showError('Network error during Clock In.');
@@ -357,6 +413,13 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
                 onPressed: attendanceStatus == 'Clocked In' 
                     ? null 
                     : () async {
+                  // If they already clocked in today (even after clocking back out),
+                  // stop them here — don't open the camera for nothing.
+                  if (_lastClockInDate == _todayDateString()) {
+                    _showAlertDialog('You have already clocked in today. Only one clock-in per day is allowed.');
+                    return;
+                  }
+
                   Position? position = await getCurrentLocation();
                   if (position == null) {
                     _showError('Could not get GPS location. Please enable location services.');
