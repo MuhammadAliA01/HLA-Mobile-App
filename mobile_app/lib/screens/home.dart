@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
+import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
 import 'account/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -36,6 +37,7 @@ Future<void> checkLogin() async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFf6f7fb),
       body: SizedBox(
         width: double.infinity,
         child: Column(
@@ -43,51 +45,65 @@ Future<void> checkLogin() async{
         spacing: 40,
         
         children: [
-          Text('Welcome Teacher', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),),
+          
+          Padding(padding: EdgeInsets.only(left: 20, top: 20),
+          child: Align(child:           
+            Text('Welcome', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,), ),
+            alignment: Alignment.centerLeft,
+            ),
+              ),
+          
           InkWell(
             onTap: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QRScanner()));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => ClassList()));
             },
-          child:  Container(
-            width: 150,
+          child:  Ink(
+            width: 400,
+            height: 200,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(11),
-              border: Border.all(
-                color: Colors.grey,
-                width: 1
-              )
-            ),
-            child: Column(
-              children: [
-                Icon(Icons.accessibility_new_rounded, size: 50,),
-                Text('Attendance', style: TextStyle(fontSize: 20),)
-              ],
-            ),
-
-          ),
-          ),
-         
-         InkWell(
-          onTap: () {},
-          child: Container(
-             width: 150,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(11),
-              border: Border.all(
-                color: Colors.grey
-              )
-            ),
-            child: Column(
               
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(
+                color: Colors.transparent,
+                width: 2
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8
+                )
+              ]
+            ),
+            child: Column(
               children: [
-                Icon(Icons.access_time, size: 50,),
-                Text('Clock In', style: TextStyle(fontSize: 20),)
+                Expanded(child: 
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.accessibility_new_rounded, size: 50, color: Colors.deepOrange,),
+                      Text('Attendance', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
+                    ],
+                  ),
+                )
+                
+                
+                
+                
               ],
             ),
-          ),
-         ),
 
-          InkWell(
+          ),
+          ),
+
+
+          
+
+
+         
+
+          /*InkWell( //code to log out. Commented out since not needed rn
           onTap: () async {
             await storage.delete(key: 'token');
             
@@ -108,7 +124,7 @@ Future<void> checkLogin() async{
               ],
             ),
           ),
-         ),
+         ),*/
 
         
         ],

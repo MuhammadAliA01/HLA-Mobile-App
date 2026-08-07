@@ -4,6 +4,7 @@ import 'screens/calendar.dart';
 import 'screens/clock_in_out.dart'; 
 import 'screens/log_health.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -33,7 +34,7 @@ class _MyAppState extends State<MyApp> {
         body: pages[selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed, 
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Colors.deepOrange,
           unselectedItemColor: Colors.black,
           currentIndex: selectedIndex,
           onTap: (index) {
@@ -49,11 +50,11 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: const Color.fromARGB(255, 241, 182, 105),
           actions: [
             IconButton(
               onPressed: () {},
-              icon: const Icon(Icons.account_circle, size: 35),
+              icon: const Icon(Icons.account_circle, size: 35, color: Colors.black45,),
             ),
           ],
         ),

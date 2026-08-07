@@ -13,9 +13,10 @@ class Confirm extends StatefulWidget {
 
 final int studentID;
 final int? staffID;
+final String? studentName;
 
 
-  const Confirm({super.key, required this.studentID, required this.staffID});
+  const Confirm({super.key, required this.studentID, required this.staffID, required this.studentName});
 
   @override
   State<Confirm> createState() => _ConfirmState();
@@ -59,7 +60,7 @@ class _ConfirmState extends State<Confirm> {
       Center(
         child: Container(
            child: InkWell(
-              child: Text('Log Attendance'),
+              child: Text('Log Attendance for ' + widget.studentName.toString()),
                 onTap: () {
                   logAttend(widget.studentID, widget.staffID!);
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MyApp()));
