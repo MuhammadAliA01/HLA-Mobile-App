@@ -33,9 +33,10 @@ Future<void> checkLogin() async{
 
 
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
