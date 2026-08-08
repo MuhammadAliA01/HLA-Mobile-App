@@ -36,7 +36,7 @@ class _LoginState extends State<Login> {
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.post(
-     Uri.parse("http://localhost:7205/api/MobileAccount/Login"),
+     Uri.parse("https://localhost:7205/api/MobileAccount/Login"),
       headers: {
         "Content-Type": "application/json",
       },
@@ -53,7 +53,7 @@ class _LoginState extends State<Login> {
 
       await storage.write(key: "token", value: data["token"]);
       await storage.write(key: "staffId", value: data["staffId"].toString());
-      await storage.write(key: "staffName", value: data["firstName"].toString());
+      await storage.write(key: "staffName", value: data["staffName"].toString());
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()),);
     }
 
