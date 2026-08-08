@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
 import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
+import 'package:mobile_app/screens/medsadmin.dart';
+import 'package:mobile_app/screens/student_grader.dart';
 import 'account/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -38,7 +40,8 @@ Future<void> checkLogin() async{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFf6f7fb),
-      body: SizedBox(
+      body: SingleChildScrollView(child: 
+      SizedBox(
         width: double.infinity,
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,6 +100,94 @@ Future<void> checkLogin() async{
           ),
           ),
 
+          InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => MedsTrackingPage()));
+            },
+          child:  Ink(
+            width: 400,
+            height: 200,
+            decoration: BoxDecoration(
+              
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(
+                color: Colors.transparent,
+                width: 2
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8
+                )
+              ]
+            ),
+            child: Column(
+              children: [
+                Expanded(child: 
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.medical_services, size: 50, color: Colors.deepOrange,),
+                      Text('Meds Tracking', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
+                    ],
+                  ),
+                )
+                
+                
+                
+                
+              ],
+            ),
+
+          ),
+          ),
+
+          InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => DashboardScreen()));
+            },
+          child:  Ink(
+            width: 400,
+            height: 200,
+            decoration: BoxDecoration(
+              
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(
+                color: Colors.transparent,
+                width: 2
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8
+                )
+              ]
+            ),
+            child: Column(
+              children: [
+                Expanded(child: 
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.book, size: 50, color: Colors.deepOrange,),
+                      Text('Homework', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
+                    ],
+                  ),
+                )
+                
+                
+                
+                
+              ],
+            ),
+
+          ),
+          ),
+
 
           
 
@@ -130,6 +221,8 @@ Future<void> checkLogin() async{
         ],
       ),
       ) 
+      )
+      
      
     );
   }

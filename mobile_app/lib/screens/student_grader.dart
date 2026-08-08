@@ -49,10 +49,10 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   String selectedGrade = 'Grade 4';
-  String selectedSubject = 'Language Development';
+  String selectedSubject = 'Language Dev';
 
   final List<String> grades = ['Grade 1', 'Grade 2', 'Grade 3','Grade 4','Grade 5','Grade 6','Grade 7'];
-  final List<String> subjects = ['Language Development', 'Creative Development', 'Gaining Independence','Basic Concepts','Physical Theraphy','Social Skills'];
+  final List<String> subjects = ['Language Dev', 'Creative Dev', 'Gaining Indp','Basic Concepts','Physical Therapy','Social Skills'];
 
   // Global mock storage for active tasks
   List<StudentActivity> activeSubmissions = [
