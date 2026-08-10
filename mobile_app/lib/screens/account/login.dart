@@ -36,7 +36,7 @@ class _LoginState extends State<Login> {
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.post(
-     Uri.parse("https://localhost:7205/api/MobileAccount/Login"),
+     Uri.parse("http://localhost:7205/api/MobileAccount/Login"),
       headers: {
         "Content-Type": "application/json",
       },

@@ -7,17 +7,175 @@ void main() {
   runApp(MyApp());
 }
 
+
+class AppColors {
+  static const Color primary = Color.fromARGB(255, 248, 75, 1); // muted terracotta
+  static const Color primaryLight = Color(0xFFF3E3DA);
+  static const Color primaryDark = Color(0xFF8F3F1E);
+
+  static const Color background = Color(0xFFFAF7F5);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color border = Color(0xFFE8E2DD);
+
+  static const Color textPrimary = Color(0xFF2C2A28);
+  static const Color textSecondary = Color(0xFF6F6862);
+  static const Color textMuted = Color(0xFF9B948D);
+
+  static const Color success = Color(0xFF3F8F5C);
+  static const Color successLight = Color(0xFFE5F3EA);
+
+  static const Color warning = Color(0xFFC17A1F);
+  static const Color warningLight = Color(0xFFFBF0DF);
+}
+
+class AppTheme {
+  static ThemeData get light {
+    return ThemeData(
+      useMaterial3: true,
+      scaffoldBackgroundColor: AppColors.background,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+        primary: AppColors.primary,
+        surface: AppColors.surface,
+        brightness: Brightness.light,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textPrimary,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.border, width: 1),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          minimumSize: const Size.fromHeight(52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.background,
+        hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 15),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          color: AppColors.textPrimary,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          color: AppColors.textSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+/// Small reusable avatar used for a student's initials, replacing the
+/// large bare Icon(Icons.person) used previously.
+class InitialsAvatar extends StatelessWidget {
+  final String name;
+  final double size;
+
+  const InitialsAvatar({super.key, required this.name, this.size = 48});
+
+  String get _initials {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return '?';
+    final first = parts.first[0];
+    final last =
+        parts.length > 1 && parts.last.isNotEmpty ? parts.last[0] : '';
+    return (first + last).toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(
+        color: AppColors.primaryLight,
+        shape: BoxShape.circle,
+      ),
+      child: Text(
+        _initials,
+        style: TextStyle(
+          color: AppColors.primaryDark,
+          fontWeight: FontWeight.w600,
+          fontSize: size * 0.36,
+        ),
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: MedsTrackingPage());
+    return MaterialApp(
+      theme: AppTheme.light,
+      home: MedsTrackingPage(studentId: 1),
+    );
   }
 }
 
 class MedsTrackingPage extends StatefulWidget {
-  const MedsTrackingPage({super.key});
+  final int studentId;
+
+  const MedsTrackingPage({
+    super.key,
+    required this.studentId,
+  });
 
   @override
   State<MedsTrackingPage> createState() => _MedsTrackingPageState();
@@ -29,6 +187,12 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
 
   // Holds the medication selected from the dropdown
   String? _selectedMedication;
+
+  @override
+  void initState() {
+    super.initState();
+    getStudentDetails();
+  }
 
   // Hardcoded medication list for now
   final List<String> _medications = [
@@ -46,6 +210,38 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
     'Stilpane': 4,
   };
 
+  String studentName = '';
+  String parentName = '';
+  String className = '';
+
+  Future<void> getStudentDetails() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'http://localhost:7205/api/MedsAdministered/students',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final List students = jsonDecode(response.body);
+
+        for (var student in students) {
+          if (student['id'] == widget.studentId) {
+            setState(() {
+              studentName = student['name'];
+              parentName = student['parentName'];
+              className = student['className'];
+            });
+
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting student details: $e');
+    }
+  }
+
   // Sends the medication administration information to the backend
   // and gets the correct student's parent information back.
   Future<Map<String, dynamic>?> administerMedication() async {
@@ -59,74 +255,47 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
     try {
       final response = await http.post(
         Uri.parse(
-          'https://localhost:59074/api/MedsAdministered',
+          'http://localhost:7205/api/MedsAdministered',
         ),
         headers: {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'studentID': 1, // hardcoded for now
+          'studentID': widget.studentId,
           'teacherID': 1, // hardcoded for now
           'medID': selectedMedId,
-          'dateAdministered':
-              _administeredDateTime.toIso8601String(),
+          'dateAdministered': _administeredDateTime.toIso8601String(),
         }),
       );
 
       if (response.statusCode == 200) {
-        // Convert the backend response from JSON
-        final Map<String, dynamic> data =
-            jsonDecode(response.body);
+        final Map<String, dynamic> data = jsonDecode(response.body);
 
-        debugPrint(
-          'Medication recorded successfully',
-        );
-
-        // Print the full backend response
-        debugPrint(
-          'Backend response: ${response.body}',
-        );
+        debugPrint('Medication recorded successfully');
+        debugPrint('Backend response: ${response.body}');
 
         // Get the parent information returned by the backend
         final parent = data['parent'];
 
         if (parent != null) {
+          debugPrint('Parent ID: ${parent['parentId']}');
           debugPrint(
-            'Parent ID: ${parent['parentId']}',
+            'Parent Name: ${parent['firstName']} ${parent['surname']}',
           );
-
-          debugPrint(
-            'Parent Name: '
-            '${parent['firstName']} '
-            '${parent['surname']}',
-          );
-
-          debugPrint(
-            'Parent Email: ${parent['email']}',
-          );
+          debugPrint('Parent Email: ${parent['email']}');
         }
 
         // Return the parent information
         return parent;
       } else {
-        debugPrint(
-          'Something went wrong',
-        );
-
-        debugPrint(
-          'Status code: ${response.statusCode}',
-        );
-
-        debugPrint(
-          'Response: ${response.body}',
-        );
+        debugPrint('Something went wrong');
+        debugPrint('Status code: ${response.statusCode}');
+        debugPrint('Response: ${response.body}');
 
         return null;
       }
     } catch (e) {
-      debugPrint(
-        'Error connecting to backend: $e',
-      );
+      debugPrint('Error connecting to backend: $e');
 
       return null;
     }
@@ -158,8 +327,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
   Future<void> _pickTime() async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime:
-          TimeOfDay.fromDateTime(_administeredDateTime),
+      initialTime: TimeOfDay.fromDateTime(_administeredDateTime),
     );
 
     if (picked != null) {
@@ -178,642 +346,289 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
   @override
   Widget build(BuildContext context) {
     final String formattedTime =
-        DateFormat('h:mm a')
-            .format(_administeredDateTime);
+        DateFormat('h:mm a').format(_administeredDateTime);
 
     final String formattedDate =
-        DateFormat('d MMMM yyyy')
-            .format(_administeredDateTime);
+        DateFormat('d MMMM yyyy').format(_administeredDateTime);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:
-            const Color.fromARGB(255, 239, 123, 87),
-        title:
-            const Text('Medication Tracking'),
-        centerTitle: true,
+        title: const Text('Medication tracking'),
       ),
-
       body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Student info
+Card(
+  child: Padding(
+    padding: const EdgeInsets.all(16),
+    child: Row(
+      children: [
+        InitialsAvatar(
+          name: studentName,
+          size: 56,
+        ),
 
-            // First Card - Student Information
-            Card(
-              margin:
-                  const EdgeInsets.all(25),
+        const SizedBox(width: 16),
 
-              child: SizedBox(
-                width: double.infinity,
-                height: 200,
-
-                child: Padding(
-                  padding:
-                      const EdgeInsets.all(20),
-
-                  child: Row(
-                    children: [
-
-                      const Icon(
-                        Icons.person,
-                        size: 70,
-                        color:
-                            Colors.deepOrange,
-                      ),
-
-                      const SizedBox(
-                        width: 20,
-                      ),
-
-                      Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-
-                        mainAxisAlignment:
-                            MainAxisAlignment.center,
-
-                        children: const [
-
-                          Text(
-                            'Azraa Khan',
-                            style:
-                                TextStyle(
-                              fontSize: 26,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-
-                          SizedBox(
-                            height: 10,
-                          ),
-
-                          Text(
-                            'Grade 2',
-                          ),
-
-                          SizedBox(
-                            height: 10,
-                          ),
-
-                          Text(
-                            'Student no: 223456',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              studentName,
+              style: TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
               ),
             ),
 
-            // Second Card - Meds Info
-            Card(
-              margin:
-                  const EdgeInsets.all(25),
+            const SizedBox(height: 4),
 
-              child: SizedBox(
-                width: double.infinity,
-                height: 200,
-
-                child: Padding(
-                  padding:
-                      const EdgeInsets.all(20),
-
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-
-                    children: [
-
-                      const Text(
-                        'Medication',
-                        style:
-                            TextStyle(
-                          fontSize: 20,
-                          color:
-                              Colors.deepOrange,
-                          fontWeight:
-                              FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 15,
-                      ),
-
-                      // Dropdown for meds
-                      DropdownButtonFormField<String>(
-                        initialValue:
-                            _selectedMedication,
-
-                        decoration:
-                            InputDecoration(
-                          hintText:
-                              'Select medication',
-
-                          prefixIcon:
-                              const Icon(
-                            Icons.medication,
-                            size: 30,
-                            color:
-                                Colors.deepOrange,
-                          ),
-
-                          border:
-                              OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(
-                                    10),
-                          ),
-                        ),
-
-                        items:
-                            _medications.map(
-                          (String medication) {
-                            return DropdownMenuItem<
-                                String>(
-                              value:
-                                  medication,
-
-                              child: Text(
-                                medication,
-                                style:
-                                    const TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                            );
-                          },
-                        ).toList(),
-
-                        onChanged:
-                            (String? newValue) {
-                          setState(() {
-                            _selectedMedication =
-                                newValue;
-                          });
-                        },
-                      ),
-
-                      const SizedBox(
-                        height: 15,
-                      ),
-
-                      // Shows the selected medication
-                      if (_selectedMedication !=
-                          null)
-                        Row(
-                          children: [
-
-                            const Icon(
-                              Icons.medication,
-                              size: 30,
-                              color:
-                                  Colors.deepOrange,
-                            ),
-
-                            const SizedBox(
-                              width: 15,
-                            ),
-
-                            Text(
-                              _selectedMedication!,
-                              style:
-                                  const TextStyle(
-                                fontSize: 22,
-                                fontWeight:
-                                    FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
+            Text(
+              'Parent: $parentName',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
               ),
             ),
 
-            // Third Card - Log Administration
-            Card(
-              margin:
-                  const EdgeInsets.all(25),
+            const SizedBox(height: 4),
 
+            Text(
+              'Class: $className',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+),
+
+            const SizedBox(height: 14),
+
+            // Medication
+            Card(
               child: Padding(
-                padding:
-                    const EdgeInsets.all(20),
-
+                padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     const Text(
-                      'Log Administration',
-                      style:
-                          TextStyle(
-                        fontSize: 24,
-                        color:
-                            Colors.deepOrange,
-                        fontWeight:
-                            FontWeight.bold,
+                      'Medication',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSecondary,
                       ),
                     ),
-
-                    const SizedBox(
-                      height: 20,
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedMedication,
+                      icon: const Icon(Icons.keyboard_arrow_down,
+                          color: AppColors.textMuted),
+                      decoration: const InputDecoration(
+                        hintText: 'Select medication',
+                        prefixIcon: Icon(
+                          Icons.medication_outlined,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      items: _medications.map((String medication) {
+                        return DropdownMenuItem<String>(
+                          value: medication,
+                          child: Text(
+                            medication,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedMedication = newValue;
+                        });
+                      },
                     ),
+                  ],
+                ),
+              ),
+            ),
 
-                    // Actual Time
-                    InkWell(
-                      onTap:
-                          _pickTime,
+            const SizedBox(height: 14),
 
-                      borderRadius:
-                          BorderRadius.circular(
-                              10),
-
-                      child: Row(
-                        children: [
-
-                          const Icon(
-                            Icons.access_time,
-                            size: 30,
-                            color:
-                                Colors.deepOrange,
-                          ),
-
-                          const SizedBox(
-                            width: 15,
-                          ),
-
-                          const Text(
-                            'Actual Time',
-                            style:
-                                TextStyle(
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-
-                          const Spacer(),
-
-                          Text(
-                            formattedTime,
-                            style:
-                                const TextStyle(
-                              fontSize: 18,
-                            ),
-                          ),
-
-                          const SizedBox(
-                            width: 6,
-                          ),
-
-                          const Icon(
-                            Icons.edit,
-                            size: 18,
-                            color:
-                                Colors.grey,
-                          ),
-                        ],
+            // Log administration
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Log administration',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSecondary,
                       ),
                     ),
+                    const SizedBox(height: 12),
 
-                    const SizedBox(
-                      height: 25,
+                    _EditableRow(
+                      icon: Icons.access_time,
+                      label: 'Time',
+                      value: formattedTime,
+                      onTap: _pickTime,
+                    ),
+                    const SizedBox(height: 8),
+                    _EditableRow(
+                      icon: Icons.calendar_month_outlined,
+                      label: 'Date',
+                      value: formattedDate,
+                      onTap: _pickDate,
                     ),
 
-                    // Date
-                    InkWell(
-                      onTap:
-                          _pickDate,
-
-                      borderRadius:
-                          BorderRadius.circular(
-                              10),
-
-                      child: Row(
-                        children: [
-
-                          const Icon(
-                            Icons.calendar_month,
-                            size: 30,
-                            color:
-                                Colors.deepOrange,
-                          ),
-
-                          const SizedBox(
-                            width: 15,
-                          ),
-
-                          const Text(
-                            'Date',
-                            style:
-                                TextStyle(
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-
-                          const Spacer(),
-
-                          Text(
-                            formattedDate,
-                            style:
-                                const TextStyle(
-                              fontSize: 18,
-                            ),
-                          ),
-
-                          const SizedBox(
-                            width: 6,
-                          ),
-
-                          const Icon(
-                            Icons.edit,
-                            size: 18,
-                            color:
-                                Colors.grey,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 25,
-                    ),
+                    const SizedBox(height: 18),
 
                     const Text(
                       'Notes (optional)',
-                      style:
-                          TextStyle(
-                        fontSize: 18,
-                        fontWeight:
-                            FontWeight.bold,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const TextField(
+                      minLines: 2,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        hintText: 'Add a note...',
                       ),
                     ),
 
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 20),
 
-                    TextField(
-                      decoration:
-                          InputDecoration(
-                        hintText:
-                            'Add a note...',
-
-                        border:
-                            OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(
-                                  10),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 25,
-                    ),
-
-                    // Confirmation Button
                     SizedBox(
-                      width:
-                          double.infinity,
-                      height: 55,
-
-                      child:
-                          ElevatedButton.icon(
-
-                        onPressed:
-                            () async {
-
-                          // Check that a medication
-                          // has been selected
-                          if (_selectedMedication ==
-                              null) {
-
-                            ScaffoldMessenger.of(
-                                    context)
-                                .showSnackBar(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          // Check that a medication has been selected
+                          if (_selectedMedication == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content:
-                                    Text(
-                                  'Please select a medication first.',
-                                ),
+                                    Text('Please select a medication first.'),
                               ),
                             );
 
                             return;
                           }
 
-                          // Send information to backend
-                          // and get parent information
-                          final parent =
-                              await administerMedication();
+                          // Send information to backend and get parent info
+                          final parent = await administerMedication();
 
-                          if (parent != null &&
-                              mounted) {
-
-                            // Print parent details
+                          if (parent != null && mounted) {
+                            debugPrint('Correct parent found:');
+                            debugPrint('Parent ID: ${parent['parentId']}');
                             debugPrint(
-                              'Correct parent found:',
+                              'Parent Name: ${parent['firstName']} ${parent['surname']}',
                             );
-
-                            debugPrint(
-                              'Parent ID: '
-                              '${parent['parentId']}',
-                            );
-
-                            debugPrint(
-                              'Parent Name: '
-                              '${parent['firstName']} '
-                              '${parent['surname']}',
-                            );
-
-                            debugPrint(
-                              'Parent Email: '
-                              '${parent['email']}',
-                            );
+                            debugPrint('Parent Email: ${parent['email']}');
 
                             Navigator.push(
                               context,
-
                               MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        ConfirmationScreen(
-                                  studentName:
-                                      'Azraa Khan',
-
-                                  administeredDateTime:
-                                      _administeredDateTime,
+                                builder: (context) => ConfirmationScreen(
+                                  studentName: studentName,
+                                  administeredDateTime: _administeredDateTime,
                                 ),
                               ),
                             );
-
                           } else if (mounted) {
-
-                            ScaffoldMessenger.of(
-                                    context)
-                                .showSnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content:
-                                    Text(
-                                  'Medication could not be recorded.',
-                                ),
+                                content: Text(
+                                    'Medication could not be recorded.'),
                               ),
                             );
                           }
                         },
-
-                        icon:
-                            const Icon(
-                          Icons.check_circle,
-                        ),
-
-                        label:
-                            const Text(
-                          'Confirm Administered',
-                          style:
-                              TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-
-                        style:
-                            ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.deepOrange,
-
-                          foregroundColor:
-                              Colors.white,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 20,
-                    ),
-
-                    // Overdue Notice
-                    Container(
-                      width:
-                          double.infinity,
-
-                      padding:
-                          const EdgeInsets.all(
-                              16),
-
-                      decoration:
-                          BoxDecoration(
-                        color:
-                            Colors.orange.shade50,
-
-                        borderRadius:
-                            BorderRadius.circular(
-                                10),
-
-                        border:
-                            Border.all(
-                          color:
-                              Colors.orange.shade200,
-                        ),
-                      ),
-
-                      child: Row(
-                        crossAxisAlignment:
-                            CrossAxisAlignment
-                                .start,
-
-                        children: [
-
-                          Icon(
-                            Icons.notifications,
-                            color:
-                                Colors.orange
-                                    .shade700,
-                          ),
-
-                          const SizedBox(
-                            width: 12,
-                          ),
-
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment
-                                      .start,
-
-                              children: [
-
-                                Text(
-                                  'Medication Overdue',
-
-                                  style:
-                                      TextStyle(
-                                    fontSize: 16,
-                                    fontWeight:
-                                        FontWeight
-                                            .bold,
-                                    color:
-                                        Colors.orange
-                                            .shade700,
-                                  ),
-                                ),
-
-                                const SizedBox(
-                                  height: 6,
-                                ),
-
-                                RichText(
-                                  text:
-                                      TextSpan(
-
-                                    style:
-                                        const TextStyle(
-                                      fontSize: 14,
-                                      color:
-                                          Colors.black87,
-                                    ),
-
-                                    children: [
-
-                                      const TextSpan(
-                                        text:
-                                            'If medication is not logged within ',
-                                      ),
-
-                                      const TextSpan(
-                                        text:
-                                            '10 minutes',
-                                        style:
-                                            TextStyle(
-                                          fontWeight:
-                                              FontWeight
-                                                  .bold,
-                                        ),
-                                      ),
-
-                                      const TextSpan(
-                                        text:
-                                            ' of the scheduled time, the parent and principal will be notified.',
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        icon: const Icon(Icons.check_circle_outline),
+                        label: const Text('Confirm administered'),
                       ),
                     ),
                   ],
                 ),
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            // Overdue notice
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.warningLight,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.notifications_none,
+                    color: AppColors.warning,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Medication overdue',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.warning,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        RichText(
+                          text: const TextSpan(
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              height: 1.4,
+                              color: AppColors.textSecondary,
+                            ),
+                            children: [
+                              TextSpan(
+                                text:
+                                    'If medication is not logged within ',
+                              ),
+                              TextSpan(
+                                text: '10 minutes',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    ' of the scheduled time, the parent and principal will be notified.',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -823,13 +638,72 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
   }
 }
 
+/// A tappable row used for the time/date pickers in the log
+/// administration card.
+class _EditableRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+
+  const _EditableRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.background,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: AppColors.primary),
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(width: 6),
+              const Icon(
+                Icons.edit_outlined,
+                size: 16,
+                color: AppColors.textMuted,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 // Confirmation Screen
-class ConfirmationScreen
-    extends StatelessWidget {
-
+class ConfirmationScreen extends StatelessWidget {
   final String studentName;
-
   final DateTime administeredDateTime;
 
   const ConfirmationScreen({
@@ -839,218 +713,104 @@ class ConfirmationScreen
   });
 
   @override
-  Widget build(
-      BuildContext context) {
-
+  Widget build(BuildContext context) {
     final String formattedTime =
-        DateFormat('h:mm a')
-            .format(administeredDateTime);
+        DateFormat('h:mm a').format(administeredDateTime);
 
     final String formattedDate =
-        DateFormat('d MMMM yyyy')
-            .format(administeredDateTime);
+        DateFormat('d MMMM yyyy').format(administeredDateTime);
 
     return Scaffold(
-
-      appBar:
-          AppBar(
-        backgroundColor:
-            const Color.fromARGB(
-                255, 239, 123, 87),
-
-        title:
-            const Text(
-                'Confirmation'),
-
-        centerTitle:
-            true,
+      appBar: AppBar(
+        title: const Text('Confirmation'),
       ),
-
-      body:
-          Center(
-
-        child:
-            Padding(
-          padding:
-              const EdgeInsets.all(
-                  30),
-
-          child:
-              Column(
-
-            mainAxisAlignment:
-                MainAxisAlignment
-                    .center,
-
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
-              const Icon(
-                Icons.check_circle,
-                size: 90,
-                color:
-                    Colors.green,
-              ),
-
-              const SizedBox(
-                height: 20,
-              ),
-
-              const Text(
-                'Medication Administered',
-
-                style:
-                    TextStyle(
-                  fontSize: 24,
-                  fontWeight:
-                      FontWeight.bold,
+              Container(
+                width: 84,
+                height: 84,
+                decoration: const BoxDecoration(
+                  color: AppColors.successLight,
+                  shape: BoxShape.circle,
                 ),
-
-                textAlign:
-                    TextAlign.center,
+                child: const Icon(
+                  Icons.check,
+                  size: 42,
+                  color: AppColors.success,
+                ),
               ),
-
-              const SizedBox(
-                height: 10,
+              const SizedBox(height: 24),
+              const Text(
+                'Medication administered',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
               ),
-
+              const SizedBox(height: 10),
               Text(
                 "$studentName's medication has been administered",
-
-                style:
-                    const TextStyle(
-                  fontSize: 16,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.textSecondary,
                 ),
-
-                textAlign:
-                    TextAlign.center,
+                textAlign: TextAlign.center,
               ),
-
-              const SizedBox(
-                height: 15,
-              ),
-
+              const SizedBox(height: 6),
               Text(
                 'Logged for $formattedTime on $formattedDate',
-
-                style:
-                    const TextStyle(
-                  fontSize: 16,
-                  color:
-                      Colors.grey,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textMuted,
                 ),
-
-                textAlign:
-                    TextAlign.center,
+                textAlign: TextAlign.center,
               ),
-
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 24),
 
               // Notification indicator
               Container(
-
                 padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.successLight,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-
-                decoration:
-                    BoxDecoration(
-
-                  color:
-                      Colors.green.shade50,
-
-                  borderRadius:
-                      BorderRadius.circular(
-                          10),
-
-                  border:
-                      Border.all(
-                    color:
-                        Colors.green.shade200,
-                  ),
-                ),
-
-                child:
-                    Row(
-
-                  mainAxisSize:
-                      MainAxisSize.min,
-
-                  children: [
-
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
                     Icon(
-                      Icons
-                          .notifications_active,
-                      size: 18,
-                      color:
-                          Colors.green
-                              .shade700,
+                      Icons.notifications_active_outlined,
+                      size: 16,
+                      color: AppColors.success,
                     ),
-
-                    const SizedBox(
-                      width: 8,
-                    ),
-
+                    SizedBox(width: 8),
                     Text(
                       'Parent has been notified',
-
-                      style:
-                          TextStyle(
-                        fontSize: 14,
-                        color:
-                            Colors.green
-                                .shade700,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.success,
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 36),
 
               SizedBox(
-
-                width:
-                    double.infinity,
-
-                height:
-                    50,
-
-                child:
-                    ElevatedButton(
-
+                width: double.infinity,
+                child: ElevatedButton(
                   onPressed: () {
-
-                    Navigator.pop(
-                        context);
-
+                    Navigator.pop(context);
                   },
-
-                  style:
-                      ElevatedButton.styleFrom(
-
-                    backgroundColor:
-                        Colors.deepOrange,
-
-                    foregroundColor:
-                        Colors.white,
-                  ),
-
-                  child:
-                      const Text(
-
-                    'Back to Meds Tracking',
-
-                    style:
-                        TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
+                  child: const Text('Back to meds tracking'),
                 ),
               ),
             ],

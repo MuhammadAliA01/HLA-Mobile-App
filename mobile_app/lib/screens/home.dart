@@ -6,6 +6,7 @@ import 'package:mobile_app/screens/medsadmin.dart';
 import 'package:mobile_app/screens/student_grader.dart';
 import 'account/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'medsstudentlist.dart';
 
 
 
@@ -102,7 +103,7 @@ Future<void> checkLogin() async{
 
           InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_) => MedsTrackingPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MedsStudentList()));
             },
           child:  Ink(
             width: 400,
