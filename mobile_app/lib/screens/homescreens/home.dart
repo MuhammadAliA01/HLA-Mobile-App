@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
+import 'package:mobile_app/screens/homescreens/parenthome.dart';
+import 'package:mobile_app/screens/studentactivities/activitydashboard.dart';
 import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
+import 'package:mobile_app/screens/studentactivities/createactivity.dart';
 import 'package:mobile_app/screens/medsadmin.dart';
 import 'package:mobile_app/screens/student_grader.dart';
-import 'account/login.dart';
+import 'package:mobile_app/screens/studentactivities/parenthomework.dart';
+import '../account/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 
 
@@ -30,8 +35,36 @@ Future<void> checkLogin() async{
   final token = await storage.read(key: "token");
 
   if (token == null){
+    
+
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
+
+    return;
   }
+
+  if (JwtDecoder.isExpired(token!)){
+    await storage.delete(key: 'token');
+
+    return;
+  }
+
+  final decodedToken = JwtDecoder.decode(token);
+
+  print(decodedToken);
+
+  final role = decodedToken["role"]?.toString().trim();
+
+  if (role == 'Staff'){
+      return;
+  }
+  else if (role == 'Parent'){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Parenthome()));
+
+        return;
+  }
+
+
+
 }
 
 
@@ -146,7 +179,7 @@ Future<void> checkLogin() async{
 
           InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_) => DashboardScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityDashboard()));
             },
           child:  Ink(
             width: 400,
@@ -216,6 +249,29 @@ Future<void> checkLogin() async{
             ),
           ),
          ),*/
+
+         InkWell( //code to log out. Commented out since not needed rn
+          onTap: () async {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => ParentHomeworkScreen()));
+            
+          },
+          child: Container(
+             width: 150,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(
+                color: Colors.grey
+              )
+            ),
+            child: Column(
+              
+              children: [
+                Icon(Icons.access_time, size: 50,),
+                Text('dgdgddg', style: TextStyle(fontSize: 20),)
+              ],
+            ),
+          ),
+         ),
 
         
         ],

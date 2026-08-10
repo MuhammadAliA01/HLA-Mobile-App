@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899608943318",
+    "project_id": "hla-notifs",
+    "storage_bucket": "hla-notifs.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899608943318:android:b1513023a0ba3e1214c777",
+        "android_client_info": {
+          "package_name": "com.example.mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASjPeuBT60zzyGQtKOIJGfJ-0CSdATGpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

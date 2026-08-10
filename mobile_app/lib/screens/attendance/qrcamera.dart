@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mobile_app/main.dart';
+import 'package:mobile_app/screens/attendance/alreadyatt.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobile_app/screens/attendance/confirm.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 
 class QRScanner extends StatefulWidget {
@@ -17,10 +22,56 @@ class _QRScannerState extends State<QRScanner> {
   bool scanned = false;
 
 
+ String responsecode = '';
 
+
+ 
 
   @override
   Widget build(BuildContext context) {
+
+      Future<void> checkAttend(int StudentID) async {
+
+      const FlutterSecureStorage storage = FlutterSecureStorage();
+
+      final response = await http.post(
+     Uri.parse("http://192.168.0.159:7205/api/MobileAttendance/checkattendance"),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "studentID": StudentID,
+        
+      }),
+    );
+
+print("STATUS CODE: ${response.statusCode}");
+print("RESPONSE BODY: ${response.body}");
+  
+    if (response.statusCode == 200){
+      responsecode = response.body.trim();
+  print(responsecode);
+
+
+      
+    }
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     return Scaffold(
         appBar:AppBar(
           title: Text('Scan QR Code'),
@@ -56,7 +107,17 @@ class _QRScannerState extends State<QRScanner> {
                 String? staffIDString = await storage.read(key: "staffId");
                 int? staffID = int.tryParse(staffIDString!);
 
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Confirm(studentID: studentID!, staffID: staffID, studentName: studentName,)));
+                await checkAttend(studentID!);
+
+                if (responsecode == 'Correct'){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => Confirm(studentID: studentID!, staffID: staffID, studentName: studentName,)));
+
+                }
+                else if (responsecode == 'Attendance Already taken'){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Already()));
+
+                }
+
             }
           },
         ),
