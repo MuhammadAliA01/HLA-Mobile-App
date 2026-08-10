@@ -24,7 +24,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
   String? _lastClockInDate; // yyyy-MM-dd of the last successful clock-in, so we know if today is already used
 
-  static const String baseUrl = 'http://192.168.0.159:7205';
+  static const String baseUrl = 'http://localhost:7205';
 
   @override
   void initState() {
@@ -60,7 +60,9 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
   Future<void> loadClockInTime() async {
     const storage = FlutterSecureStorage();
-    String? saved = await storage.read(key: "clockInTime");
+    final staffId = await getLoggedInStaffId();
+    if (staffId == null) return;
+    String? saved = await storage.read(key: "clockInTime_$staffId");
     if (saved != null) {
       setState(() {
         _clockInTime = DateTime.parse(saved);
@@ -71,7 +73,9 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
   Future<void> loadLastClockInDate() async {
     const storage = FlutterSecureStorage();
-    String? saved = await storage.read(key: "lastClockInDate");
+    final staffId = await getLoggedInStaffId();
+    if (staffId == null) return;
+    String? saved = await storage.read(key: "lastClockInDate_$staffId");
     if (saved != null) {
       setState(() {
         _lastClockInDate = saved;
@@ -121,8 +125,8 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
   }
 
   Future<bool> isWithinSchoolArea(Position position) async {
-    const double schoolLatitude = -29.887501555164576;
-    const double schoolLongitude = 30.8602477865073;
+    const double schoolLatitude = -29.8525;
+    const double schoolLongitude = 31.0036;
     const double allowedRadiusMeters = 20000000; //  wide for testing
 
     double distance = Geolocator.distanceBetween(
@@ -227,8 +231,8 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
           _lastClockInDate = todayString;
         });
         const storage = FlutterSecureStorage();
-        await storage.write(key: "clockInTime", value: now.toIso8601String());
-        await storage.write(key: "lastClockInDate", value: todayString);
+        await storage.write(key: "clockInTime_$staffId", value: now.toIso8601String());
+        await storage.write(key: "lastClockInDate_$staffId", value: todayString);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -260,7 +264,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
         if (message.toLowerCase().contains('already clocked in')) {
           const storage = FlutterSecureStorage();
           final todayString = _todayDateString();
-          await storage.write(key: "lastClockInDate", value: todayString);
+          await storage.write(key: "lastClockInDate_$staffId", value: todayString);
           setState(() {
             _lastClockInDate = todayString;
           });
@@ -305,7 +309,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
           _workedDuration = Duration.zero;
         });
         const storage = FlutterSecureStorage();
-        await storage.delete(key: "clockInTime");
+        await storage.delete(key: "clockInTime_$staffId");
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
