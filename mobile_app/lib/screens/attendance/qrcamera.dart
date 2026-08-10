@@ -35,7 +35,7 @@ class _QRScannerState extends State<QRScanner> {
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.post(
-     Uri.parse("http://localhost:7205/api/MobileAttendance/checkattendance"),
+     Uri.parse("http://192.168.0.159:7205/api/MobileAttendance/checkattendance"),
       headers: {
         "Content-Type": "application/json",
       },

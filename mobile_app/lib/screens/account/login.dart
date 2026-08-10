@@ -155,12 +155,21 @@ Future<void> sendTestNotification(int userId) async {
 
 
       if (role == 'teacher'){
-        await saveFCMToken(userId, 'Staff', jwtToken);
+        await NotificationService.setupTokenRefresh(
+    userId: userId,
+    role: 'Staff',
+    jwtToken: jwtToken,
+  );
+        
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()),);
 
       }
       else if (role == 'parent'){
-                await saveFCMToken(userId, 'Parent', jwtToken);
+                await NotificationService.setupTokenRefresh(
+  userId: userId,
+  role: 'Parent',
+  jwtToken: jwtToken,
+);
 
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Parenthome()),);
 

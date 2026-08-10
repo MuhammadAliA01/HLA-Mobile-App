@@ -23,13 +23,18 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await NotificationService.initialize();
-
-  String? token = await NotificationService.getToken();
-
-  print("FCM TOKEN: $token");
-
   runApp(const MyApp());
+
+  // Don't block the Flutter UI from starting
+  try {
+    await NotificationService.initialize();
+
+    final token = await NotificationService.getToken();
+
+    print("FCM TOKEN: $token");
+  } catch (e) {
+    print("Notification initialization failed: $e");
+  }
 }
 
 class MyApp extends StatefulWidget {
