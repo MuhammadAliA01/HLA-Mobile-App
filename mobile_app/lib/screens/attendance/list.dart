@@ -16,6 +16,10 @@ class ClassList extends StatefulWidget {
 
 class _ClassListState extends State<ClassList> {
 
+  Color primaryColor = Colors.green;
+    Color secColor = Colors.red;
+
+
   @override
   void initState(){
     super.initState();
@@ -59,10 +63,11 @@ class _ClassListState extends State<ClassList> {
 
     Future<void> logAttend() async {
 
+
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.get(
-     Uri.parse("http://192.168.0.159:7205/api/MobileAttendance/classlist"),
+     Uri.parse("http://localhost:7205/api/MobileAttendance/classlist"),
       headers: {
         "Content-Type": "application/json",
       },
@@ -101,6 +106,7 @@ class _ClassListState extends State<ClassList> {
               child: SizedBox(
                 width: 600,
                 child: Column(
+                  spacing: 30,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
             children:
@@ -122,6 +128,7 @@ class _ClassListState extends State<ClassList> {
                     child: Container(
                      child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 50,
                       children: [
                         Text('Take Attendance', style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),)
                       ],
@@ -133,13 +140,22 @@ class _ClassListState extends State<ClassList> {
                   
               ),
               ...items.map((item){
+                if (item["status"] == "Present"){
+                    primaryColor = Colors.green;
+                  
+                }
+                else if (item["status"] == "Absent"){
+                    primaryColor = Colors.red;
+
+                }
+
                 return SizedBox(
                   width: 600,
                   child: Card(
                   color: Colors.white,
                   child: ListTile(
-                  title: Text(item["name"]),
-                  subtitle: Text(item["status"]),
+                  title: Text(item["name"], style: TextStyle(fontSize: 20),),
+                  subtitle: Text(item["status"] , style: TextStyle(fontSize: 15, color: primaryColor), ),
                   contentPadding: EdgeInsets.all(30),
                   
                 ),

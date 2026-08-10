@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
+import 'package:mobile_app/screens/attendance/qrcamera.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:io';
@@ -23,6 +24,9 @@ final String? studentName;
 }
 
 class _ConfirmState extends State<Confirm> {
+
+  bool isPressed = false;
+
   @override
   Widget build(BuildContext context) {
 
@@ -31,7 +35,7 @@ class _ConfirmState extends State<Confirm> {
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.post(
-     Uri.parse("http://192.168.0.159:7205/api/MobileAttendance/logattendance"),
+     Uri.parse("http://localhost:7205/api/MobileAttendance/logattendance"),
       headers: {
         "Content-Type": "application/json",
       },
@@ -42,11 +46,17 @@ class _ConfirmState extends State<Confirm> {
       }),
     );
 
+print("STATUS CODE: ${response.statusCode}");
+print("RESPONSE BODY: ${response.body}");
   
     if (response.statusCode == 200){
       final data = jsonDecode(response.body);
 
+      print(data);
+
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()),);
+
+      
     }
 
 
@@ -56,25 +66,69 @@ class _ConfirmState extends State<Confirm> {
 
 
     return Scaffold(
-      body: 
-      Center(
-        child: Container(
-           child: InkWell(
-              child: Text('Log Attendance for ' + widget.studentName.toString()),
-                onTap: () {
-                  logAttend(widget.studentID, widget.staffID!);
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MyApp()));
-        },
+      appBar: AppBar(
+        title: Text('Confirm ${widget.studentName} Attendance', style: TextStyle(color: Colors.white),),
+        backgroundColor: Colors.deepOrangeAccent,
       ),
+        body: Center(child: 
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 20,
+          children: [
+          
+           Icon(isPressed ? Icons.check_box : Icons.question_mark, size: 70, color: const Color.fromARGB(255, 255, 17, 0),
+           
+            
+           ),
+
+            
+           Text( isPressed ? 'Attendance Taken Please Wait!' : 'Confirm ${widget.studentName} Attendance?!', style: TextStyle(fontSize: 20),),
+
+            
+            if(!isPressed)
+              InkWell(
+              
+              onTap: () async {
+                setState(() {
+                  isPressed = !isPressed;
+                });
+                logAttend(widget.studentID, widget.staffID!);
+
+                await Future.delayed(Duration(seconds: 3));
+
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QRScanner()));
+              },
+              child: 
+              SizedBox(
+                
+                height: 50,
+                width: 200,
+                child: Ink(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.transparent),
+                    color: Colors.deepOrange
+                  ),
+                  child: Center(
+                    child:Text('Confirm', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+
+                  )
+              ),
+              )
+              
+            )
+            else if (isPressed)
+              Center(
+                child: CircularProgressIndicator(),
+              )
+          ],
+        ),
         )
-       
-      )
-      
-
-
+        
     );
   }
 }
 
 // final String studentID;
-  //final String? staffID;
+  //final String? staffID;logAttend(widget.studentID, widget.staffID!);

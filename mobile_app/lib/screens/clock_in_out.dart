@@ -24,7 +24,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
   String? _lastClockInDate; // yyyy-MM-dd of the last successful clock-in, so we know if today is already used
 
-  static const String baseUrl = 'http://192.168.0.213:7205';
+  static const String baseUrl = 'http://localhost:7205';
 
   @override
   void initState() {
@@ -339,31 +339,41 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+      double screenWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clock In / Out'),
-      ),
+      backgroundColor: Colors.white,
+      
       body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-            child: Row(
-              children: [
-                const CircleAvatar(radius: 30, child: Icon(Icons.person, size: 30)),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      staffName,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+         Container(
+  padding: const EdgeInsets.all(16),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+  ),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      const CircleAvatar(
+        radius: 30,
+        child: Icon(Icons.person, size: 30),
+      ),
+
+      const SizedBox(height: 10),
+
+      Text(
+        staffName,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+    ],
+  ),
+),
 
           const SizedBox(height: 16),
 
@@ -377,7 +387,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
               children: [
                 Text(
                   '${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
-                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 70, ),
                 ),
                 Text(DateFormat('EEEE, d MMMM yyyy').format(_currentTime)),
               ],
@@ -405,10 +415,16 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
               ),
             ),
 
-          Row(
+          Column(
+            spacing: 10,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
+              SizedBox(
+                width: 300,
+                height: 50,
+                  child: 
+                  ElevatedButton(
+                
                 // REQUIREMENT B: Disable button if already clocked in
                 onPressed: attendanceStatus == 'Clocked In' 
                     ? null 
@@ -441,21 +457,27 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
                   await sendClockIn(position, photo);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.blue,
                   disabledBackgroundColor: Colors.grey.shade400, // Greys out when disabled
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset('assets/icons/clock_in.png', width: 60, height: 60),
                     const SizedBox(height: 8),
-                    const Text('CLOCK IN'),
+                    const Text('CLOCK IN', style: TextStyle(color: Colors.white),),
                   ],
                 ),
               ),
+              ),
+              
               const SizedBox(width: 20),
-              ElevatedButton(
+
+              SizedBox(
+                width: 300,
+                height: 50,
+                  child: 
+                  ElevatedButton(
                 //  Disabled clock out if they aren't clocked in
                 onPressed: attendanceStatus != 'Clocked In'
                     ? null
@@ -486,19 +508,21 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
                   await sendClockOut(position, photo);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.deepOrange,
                   disabledBackgroundColor: Colors.grey.shade400, // Greys out when disabled
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset('assets/icons/clock_out.png', width: 60, height: 60),
                     const SizedBox(height: 8),
                     const Text('CLOCK OUT'),
                   ],
                 ),
               ),
+              )
+
+              
             ],
           ),
 
@@ -513,13 +537,13 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(attendanceStatus),
+                Text(attendanceStatus, style: TextStyle(fontSize: 18),),
                 const SizedBox(width: 8),
                 Container(
                   width: 12,
                   height: 12,
                   decoration: BoxDecoration(
-                    color: attendanceStatus == 'Clocked In' ? Colors.green : const Color.fromARGB(255, 179, 8, 8),
+                    color: attendanceStatus == 'Clocked In' ? Colors.green : Colors.deepOrange,
                     shape: BoxShape.circle,
                   ),
                 ),
