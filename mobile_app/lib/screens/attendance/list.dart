@@ -67,7 +67,7 @@ class _ClassListState extends State<ClassList> {
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.get(
-     Uri.parse("http://192.168.0.159:7205/api/MobileAttendance/classlist"),
+     Uri.parse("http://localhost:7205/api/MobileAttendance/classlist"),
       headers: {
         "Content-Type": "application/json",
       },

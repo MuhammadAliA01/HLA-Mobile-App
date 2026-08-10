@@ -41,7 +41,7 @@ class _ActivityDashboardState extends State<ActivityDashboard> {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.0.159:7205/api/Activity/teacher/$teacherID',
+          'http://localhost:7205/api/Activity/teacher/$teacherID',
         ),
       );
 

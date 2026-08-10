@@ -35,7 +35,7 @@ class _ConfirmState extends State<Confirm> {
       const FlutterSecureStorage storage = FlutterSecureStorage();
 
       final response = await http.post(
-     Uri.parse("http://192.168.0.159:7205/api/MobileAttendance/logattendance"),
+     Uri.parse("http://localhost:7205/api/MobileAttendance/logattendance"),
       headers: {
         "Content-Type": "application/json",
       },
