@@ -24,7 +24,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
   String? _lastClockInDate; // yyyy-MM-dd of the last successful clock-in, so we know if today is already used
 
-  static const String baseUrl = 'http://localhost:7205';
+  static const String baseUrl = 'http://192.168.0.159:7205';
 
   @override
   void initState() {
@@ -121,8 +121,8 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
   }
 
   Future<bool> isWithinSchoolArea(Position position) async {
-    const double schoolLatitude = -29.8525;
-    const double schoolLongitude = 31.0036;
+    const double schoolLatitude = -29.887501555164576;
+    const double schoolLongitude = 30.8602477865073;
     const double allowedRadiusMeters = 20000000; //  wide for testing
 
     double distance = Geolocator.distanceBetween(

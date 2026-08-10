@@ -110,7 +110,7 @@ Future<void> sendTestNotification(int userId) async {
 
       final response = await http.post(
 
-     Uri.parse("https://localhost:7205/api/MobileAccount/Login"),
+     Uri.parse("http://192.168.0.159:7205/api/MobileAccount/Login"),
 
       headers: {
 

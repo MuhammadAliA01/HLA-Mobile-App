@@ -62,7 +62,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
+      home: 
+      Builder(builder: (context){
+        return  Scaffold(
         body: pages[selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed, 
@@ -87,8 +89,9 @@ class _MyAppState extends State<MyApp> {
           actions: [
             PopupMenuButton(
               onSelected: (value) async { if (value == 'Log Out'){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
                  await storage.delete(key: 'token');
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
+                
               }},
               icon: const Icon(Icons.account_circle, size: 35, color: Colors.black45,),
               itemBuilder: (BuildContext context) => [
@@ -97,7 +100,9 @@ class _MyAppState extends State<MyApp> {
             ),
           ],
         ),
-      ),
+      );
+      })
+      
     );
   }
 }

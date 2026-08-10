@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
 import 'package:mobile_app/screens/homescreens/parenthome.dart';
+import 'package:mobile_app/screens/medsstudentlist.dart';
 import 'package:mobile_app/screens/studentactivities/activitydashboard.dart';
 import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
