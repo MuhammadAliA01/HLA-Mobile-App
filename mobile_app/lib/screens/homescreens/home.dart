@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
 import 'package:mobile_app/screens/homescreens/parenthome.dart';
+import 'package:mobile_app/screens/meds_qr_scanner.dart';
 import 'package:mobile_app/screens/medsstudentlist.dart';
 import 'package:mobile_app/screens/studentactivities/activitydashboard.dart';
 import 'package:mobile_app/screens/attendance/list.dart';
@@ -137,7 +138,7 @@ Future<void> checkLogin() async{
 
           InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const MedsStudentList()));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MedsQRScanner()));
             },
           child:  Ink(
             width: 400,

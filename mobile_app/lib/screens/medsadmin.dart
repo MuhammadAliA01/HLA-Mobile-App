@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'meds_qr_scanner.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
