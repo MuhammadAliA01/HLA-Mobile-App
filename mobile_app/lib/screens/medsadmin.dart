@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(MyApp());
@@ -182,11 +183,13 @@ class MedsTrackingPage extends StatefulWidget {
 }
 
 class _MedsTrackingPageState extends State<MedsTrackingPage> {
-  // Holds the date and time selected by the teacher
+  final storage = const FlutterSecureStorage();
+  // Holds date and time selected by the teacher
   DateTime _administeredDateTime = DateTime.now();
 
-  // Holds the medication selected from the dropdown
+  // Holds medication selected from the dropdown
   String? _selectedMedication;
+ 
 
   @override
   void initState() {
@@ -242,8 +245,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
     }
   }
 
-  // Sends the medication administration information to the backend
-  // and gets the correct student's parent information back.
+  
   Future<Map<String, dynamic>?> administerMedication() async {
     if (_selectedMedication == null) {
       return null;
@@ -251,6 +253,15 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
 
     // Get the database medication ID
     final int selectedMedId = _medicationIds[_selectedMedication]!;
+
+    final String? staffId = await storage.read(key: "staffId");
+
+if (staffId == null) {
+  debugPrint('No logged-in staff ID found.');
+  return null;
+}
+
+final int teacherId = int.parse(staffId);
 
     try {
       final response = await http.post(
@@ -262,7 +273,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
         },
         body: jsonEncode({
           'studentID': widget.studentId,
-          'teacherID': 1, // hardcoded for now
+          'teacherID': teacherId,
           'medID': selectedMedId,
           'dateAdministered': _administeredDateTime.toIso8601String(),
         }),
@@ -274,7 +285,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
         debugPrint('Medication recorded successfully');
         debugPrint('Backend response: ${response.body}');
 
-        // Get the parent information returned by the backend
+        // Get the parent infoo returned by the backend and return it
         final parent = data['parent'];
 
         if (parent != null) {
@@ -285,7 +296,6 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
           debugPrint('Parent Email: ${parent['email']}');
         }
 
-        // Return the parent information
         return parent;
       } else {
         debugPrint('Something went wrong');
@@ -360,6 +370,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             // Student info
 Card(
   child: Padding(
@@ -518,7 +529,7 @@ Card(
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          // Check that a medication has been selected
+                          
                           if (_selectedMedication == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -530,7 +541,7 @@ Card(
                             return;
                           }
 
-                          // Send information to backend and get parent info
+                         
                           final parent = await administerMedication();
 
                           if (parent != null && mounted) {
@@ -570,7 +581,7 @@ Card(
 
             const SizedBox(height: 14),
 
-            // Overdue notice
+            // Overdue message
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -638,8 +649,7 @@ Card(
   }
 }
 
-/// A tappable row used for the time/date pickers in the log
-/// administration card.
+
 class _EditableRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -809,8 +819,9 @@ class ConfirmationScreen extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    Navigator.pop(context);
                   },
-                  child: const Text('Back to meds tracking'),
+                  child: const Text('Back to Student List'),
                 ),
               ),
             ],

@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
 
   final response = await http.post(
     Uri.parse(
-      'http://192.168.0.159:7205/api/MobileAccount/save-fcm-token',
+      'http://localhost:7205/api/MobileAccount/save-fcm-token',
     ),
     headers: {
       'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ class _LoginState extends State<Login> {
 Future<void> sendTestNotification(int userId) async {
   final response = await http.post(
     Uri.parse(
-      'http://192.168.0.159:7205/api/MobileAccount/test-notification',
+      'http://localhost:7205/api/MobileAccount/test-notification',
     ),
     headers: {
       'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ Future<void> sendTestNotification(int userId) async {
 
       final response = await http.post(
 
-     Uri.parse("http://192.168.0.159:7205/api/MobileAccount/Login"),
+     Uri.parse("http://localhost:7205/api/MobileAccount/Login"),
 
       headers: {
 
