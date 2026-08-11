@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
   
   final List<Widget> pages = const [
     Home(),
-    Calendar(),
+    StaffSchedulePage(),
     ClockInOutScreen(),
     LogHealthScreen(classId: 1, className: "Class 1A",), 
   ];

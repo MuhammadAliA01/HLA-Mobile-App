@@ -9,6 +9,7 @@ import 'package:mobile_app/screens/studentactivities/createactivity.dart';
 import 'package:mobile_app/screens/medsadmin.dart';
 import 'package:mobile_app/screens/student_grader.dart';
 import 'package:mobile_app/screens/studentactivities/parenthomework.dart';
+import 'package:mobile_app/screens/teacher_pickup.dart';
 import '../account/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -221,6 +222,53 @@ Future<void> checkLogin() async{
 
           ),
           ),
+
+          InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => TeacherPickupScreen()));
+            },
+          child:  Ink(
+            width: 400,
+            height: 200,
+            decoration: BoxDecoration(
+              
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(
+                color: Colors.transparent,
+                width: 2
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8
+                )
+              ]
+            ),
+            child: Column(
+              children: [
+                Expanded(child: 
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.car_crash_sharp, size: 50, color: Colors.deepOrange,),
+                      Text('Confirm Pickup', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
+                    ],
+                  ),
+                )
+                
+                
+                
+                
+              ],
+            ),
+
+          ),
+          ),
+
+
+          
 
 
           

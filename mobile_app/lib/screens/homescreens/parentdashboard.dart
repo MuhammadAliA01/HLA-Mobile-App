@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
 import 'package:mobile_app/screens/chatbot.dart';
+import 'package:mobile_app/screens/pickup_confirm.dart';
+import 'package:mobile_app/screens/pickup_qrcamera.dart';
 import 'package:mobile_app/screens/studentactivities/activitydashboard.dart';
 import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
@@ -26,6 +28,7 @@ class ParentDashboard extends StatefulWidget {
 class _ParentDashboardState extends State<ParentDashboard> {
  final storage = const FlutterSecureStorage();
  int? studentId;
+ String? studentName;
  bool isLoadingStudent = true;
   @override
 
@@ -55,7 +58,7 @@ Future<void> getStudentForParent() async {
 
     final response = await http.get(
       Uri.parse(
-        'http://localhost:7205/api/MedsAdministered/parent/$parentId/student',
+        'http://192.168.0.159:7205/api/MedsAdministered/parent/$parentId/student',
       ),
     );
 
@@ -66,6 +69,7 @@ Future<void> getStudentForParent() async {
 
       setState(() {
         studentId = data['studentId'];
+          studentName = data['studentName'];
         isLoadingStudent = false;
       });
     } else {
@@ -256,6 +260,76 @@ Future<void> getStudentForParent() async {
 
           ),
           ),
+
+          InkWell(
+  onTap: () {
+  if (studentId == null || studentName == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Student information is still loading.'),
+      ),
+    );
+    return;
+  }
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => PickupConfirm(
+        studentID: studentId!,
+        studentName: studentName!,
+      ),
+    ),
+  );
+},
+
+  child: Ink(
+    width: 400,
+    height: 200,
+
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(11),
+      border: Border.all(
+        color: Colors.transparent,
+        width: 2,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.2),
+          blurRadius: 8,
+        ),
+      ],
+    ),
+
+    child: Column(
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
+            children: [
+              Icon(
+                Icons.car_crash,
+                size: 50,
+                color: Colors.deepOrange,
+              ),
+
+              Text(
+                'Pickup Child',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+),  
 
         
         ],
