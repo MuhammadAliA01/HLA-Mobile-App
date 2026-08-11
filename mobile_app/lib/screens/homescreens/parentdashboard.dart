@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
+import 'package:mobile_app/screens/chatbot.dart';
 import 'package:mobile_app/screens/studentactivities/activitydashboard.dart';
 import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
@@ -94,6 +95,50 @@ Future<void> checkLogin() async{
                     children: [
                       Icon(Icons.book, size: 50, color: Colors.deepOrange,),
                       Text('Homework', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
+                    ],
+                  ),
+                )
+                
+                
+                
+                
+              ],
+            ),
+
+          ),
+          ),
+
+          InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => PerciApp()));
+            },
+          child:  Ink(
+            width: 400,
+            height: 200,
+            decoration: BoxDecoration(
+              
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(
+                color: Colors.transparent,
+                width: 2
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8
+                )
+              ]
+            ),
+            child: Column(
+              children: [
+                Expanded(child: 
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.chat, size: 50, color: Colors.deepOrange,),
+                      Text('Chatbot', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
                     ],
                   ),
                 )

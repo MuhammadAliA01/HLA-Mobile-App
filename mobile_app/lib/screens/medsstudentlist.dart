@@ -23,7 +23,7 @@ class _MedsStudentListState extends State<MedsStudentList> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://localhost:7205/api/MedsAdministered/students',
+          'http://192.168.0.159:7205/api/MedsAdministered/students',
         ),
       );
 

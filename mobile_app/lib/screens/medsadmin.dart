@@ -218,7 +218,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://localhost:7205/api/MedsAdministered/students',
+          'http://192.168.0.159:7205/api/MedsAdministered/students',
         ),
       );
 
@@ -255,7 +255,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
     try {
       final response = await http.post(
         Uri.parse(
-          'http://localhost:7205/api/MedsAdministered',
+          'http://192.168.0.159:7205/api/MedsAdministered',
         ),
         headers: {
           'Content-Type': 'application/json',

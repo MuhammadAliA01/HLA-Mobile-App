@@ -29,7 +29,7 @@ class _MedicationHistoryState extends State<MedicationHistory> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://localhost:7205/api/MedsAdministered/student/${widget.studentId}/history',
+          'http://192.168.0.159:7205/api/MedsAdministered/student/${widget.studentId}/history',
         ),
       );
 

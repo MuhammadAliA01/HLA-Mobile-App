@@ -92,7 +92,7 @@ List<StudentHealthLog> _getDummyRoster() {
     }
 
     // Aligned endpoint path and removed classId query parameter
-    final uri = Uri.parse("http://localhost:7205/api/Students/GetTeacherStudents")
+    final uri = Uri.parse("http://192.168.0.159:7205/api/Students/GetTeacherStudents")
         .replace(queryParameters: {
       "teacherId": staffId,
     });
