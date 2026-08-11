@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
+import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -34,7 +35,7 @@ class Already extends StatelessWidget {
             InkWell(
               
               onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QRScanner()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ClassList()));
               },
               child: 
               SizedBox(
