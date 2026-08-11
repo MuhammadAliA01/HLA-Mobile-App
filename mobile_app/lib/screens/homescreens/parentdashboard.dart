@@ -10,6 +10,9 @@ import 'package:mobile_app/screens/student_grader.dart';
 import 'package:mobile_app/screens/studentactivities/parenthomework.dart';
 import '../account/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mobile_app/screens/medicationhistory.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 
 
@@ -22,11 +25,14 @@ class ParentDashboard extends StatefulWidget {
 
 class _ParentDashboardState extends State<ParentDashboard> {
  final storage = const FlutterSecureStorage();
+ int? studentId;
+ bool isLoadingStudent = true;
   @override
 
 void initState(){
   super.initState();
   checkLogin();
+  getStudentForParent();
 }
 
 Future<void> checkLogin() async{
@@ -38,6 +44,44 @@ Future<void> checkLogin() async{
   }
 }
 
+Future<void> getStudentForParent() async {
+  try {
+    final parentId = await storage.read(key: "staffId");
+
+    if (parentId == null) {
+      debugPrint('No parent ID found.');
+      return;
+    }
+
+    final response = await http.get(
+      Uri.parse(
+        'http://localhost:7205/api/MedsAdministered/parent/$parentId/student',
+      ),
+    );
+
+    debugPrint('Student response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      setState(() {
+        studentId = data['studentId'];
+        isLoadingStudent = false;
+      });
+    } else {
+      debugPrint('Could not find student.');
+      setState(() {
+        isLoadingStudent = false;
+      });
+    }
+  } catch (e) {
+    debugPrint('Error getting student: $e');
+
+    setState(() {
+      isLoadingStudent = false;
+    });
+  }
+}
 
 
   @override
@@ -60,6 +104,67 @@ Future<void> checkLogin() async{
             ),
               ),
           
+
+        //meds history card
+        InkWell(
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MedicationHistory(
+          studentId: studentId!,
+        ),
+      ),
+    );
+  },
+
+  child: Ink(
+    width: 400,
+    height: 200,
+
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(11),
+      border: Border.all(
+        color: Colors.transparent,
+        width: 2,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.2),
+          blurRadius: 8,
+        ),
+      ],
+    ),
+
+    child: Column(
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
+            children: [
+              Icon(
+                Icons.medication,
+                size: 50,
+                color: Colors.deepOrange,
+              ),
+
+              Text(
+                'Medication History',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+),  
           
 
           
