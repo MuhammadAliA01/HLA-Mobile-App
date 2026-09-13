@@ -10,7 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'screens/submit_leave_screen.dart'; 
 
 
 
@@ -50,11 +50,11 @@ class _MyAppState extends State<MyApp> {
   int selectedIndex = 0; 
 
   
-  final List<Widget> pages = const [
-    Home(),
+ final List<Widget> pages = const [
+     Home(),  
     StaffSchedulePage(),
     ClockInOutScreen(),
-    LogHealthScreen(classId: 1, className: "Class 1A",), 
+    LogHealthScreen(classId: 1, className: "Class 1A"),
   ];
 
   final List<String> pageTitles = [
