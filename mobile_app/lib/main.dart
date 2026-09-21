@@ -13,10 +13,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'screens/submit_leave_screen.dart'; 
 
-
-
-
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -46,13 +42,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-    final storage = const FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   int selectedIndex = 0; 
 
-  
- final List<Widget> pages = const [
-  
+  final List<Widget> pages = const [
      Home(),  
     StaffSchedulePage(),
     ClockInOutScreen(),
@@ -64,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   'Calendar',
   'Clock In/Out',
   'Log Health',
-];
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -91,18 +85,25 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
         appBar: AppBar(
-          title: Text(pageTitles[selectedIndex], style: TextStyle(color: Colors.white),),
+          title: Text(pageTitles[selectedIndex], style: const TextStyle(color: Colors.white),),
           backgroundColor: const Color.fromARGB(255, 241, 182, 105),
           actions: [
             PopupMenuButton(
-              onSelected: (value) async { if (value == 'Log Out'){
-                 await storage.delete(key: 'token');
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
-                
-              }},
+              onSelected: (value) async { 
+                if (value == 'Log Out'){
+                  await storage.delete(key: 'token');
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Login()));
+                } else if (value == 'Request Leave') {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (_) => const SubmitLeaveScreen())
+                  );
+                }
+              },
               icon: const Icon(Icons.account_circle, size: 35, color: Colors.black45,),
               itemBuilder: (BuildContext context) => [
-                PopupMenuItem(value: 'Log Out', child: Text('Log Out'))
+                const PopupMenuItem(value: 'Request Leave', child: Text('Request Leave')),
+                const PopupMenuItem(value: 'Log Out', child: Text('Log Out'))
               ],
             ),
           ],

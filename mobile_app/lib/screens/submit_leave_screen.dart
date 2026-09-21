@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../models/leave_request.dart';
 
 class SubmitLeaveScreen extends StatefulWidget {
@@ -15,10 +17,55 @@ class _SubmitLeaveScreenState extends State<SubmitLeaveScreen> {
   DateTime? _endDate;
   String _selectedLeaveType = 'Sick Leave';
 
+  // NEW: State variables to hold the balance
+  int? _availableDays;
+  bool _isLoadingBalance = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // NEW: Fetch balance immediately when the screen loads
+    _fetchAvailableDays(_selectedLeaveType);
+  }
+
   @override
   void dispose() {
     _reasonController.dispose();
     super.dispose();
+  }
+
+  // NEW: Function to ask C# for the balance
+  Future<void> _fetchAvailableDays(String leaveType) async {
+    setState(() {
+      _isLoadingBalance = true;
+    });
+
+    // Map the dropdown string to your C# Enum index
+    int leaveTypeIndex = 0; // Default: Sick Leave
+    if (leaveType == 'Family Responsibility') leaveTypeIndex = 1;
+    if (leaveType == 'Study Leave') leaveTypeIndex = 2;
+    if (leaveType == 'Annual Leave') leaveTypeIndex = 3;
+
+    try {
+      // NOTE: 10.0.2.2 is how Android Emulators connect to localhost on your PC!
+      // Make sure the port (7123) matches the one Visual Studio actually launched on.
+      final url = Uri.parse('https://10.0.2.2:7123/api/LeaveRequest/balance/999/$leaveTypeIndex');
+      
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          _availableDays = data['availableDays'];
+        });
+      }
+    } catch (e) {
+      print('Failed to load balance: $e');
+    } finally {
+      setState(() {
+        _isLoadingBalance = false;
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -58,6 +105,7 @@ class _SubmitLeaveScreenState extends State<SubmitLeaveScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
+              
               DropdownButtonFormField<String>(
                 value: _selectedLeaveType,
                 decoration: const InputDecoration(
@@ -79,9 +127,33 @@ class _SubmitLeaveScreenState extends State<SubmitLeaveScreen> {
                   setState(() {
                     _selectedLeaveType = newValue!;
                   });
+                  // NEW: Refetch the balance when the user changes the dropdown!
+                  _fetchAvailableDays(_selectedLeaveType);
                 },
               ),
-              const SizedBox(height: 20),
+              
+              // NEW: The UI text showing the available days
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: _isLoadingBalance 
+                    ? const Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                          width: 20, 
+                          height: 20, 
+                          child: CircularProgressIndicator(strokeWidth: 2)
+                        ),
+                      )
+                    : Text(
+                        'Your available days is = ${_availableDays ?? "--"}',
+                        style: const TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.bold, 
+                          color: Colors.blueAccent
+                        ),
+                      ),
+              ),
+
               TextFormField(
                 controller: _reasonController,
                 decoration: const InputDecoration(
@@ -100,7 +172,7 @@ class _SubmitLeaveScreenState extends State<SubmitLeaveScreen> {
               ListTile(
                 title: Text(_startDate == null
                     ? 'Select Start Date'
-                    : 'Start: ${_startDate!.toLocal().toString().split(' ')[0]}'),
+                    : 'Start: ${_startDate!.toLocal()}'.split(' ')[0]),
                 trailing: const Icon(Icons.calendar_today),
                 shape: RoundedRectangleBorder(
                   side: const BorderSide(color: Colors.grey),
@@ -112,7 +184,7 @@ class _SubmitLeaveScreenState extends State<SubmitLeaveScreen> {
               ListTile(
                 title: Text(_endDate == null
                     ? 'Select End Date'
-                    : 'End: ${_endDate!.toLocal().toString().split(' ')[0]}'),
+                    : 'End: ${_endDate!.toLocal()}'.split(' ')[0]),
                 trailing: const Icon(Icons.calendar_today),
                 shape: RoundedRectangleBorder(
                   side: const BorderSide(color: Colors.grey),
