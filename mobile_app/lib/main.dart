@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/leave_request.dart';
 import 'package:mobile_app/screens/account/login.dart';
 import 'package:mobile_app/services/notification_service.dart';
 import 'screens/homescreens/home.dart';
@@ -51,6 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   
  final List<Widget> pages = const [
+  
      Home(),  
     StaffSchedulePage(),
     ClockInOutScreen(),
