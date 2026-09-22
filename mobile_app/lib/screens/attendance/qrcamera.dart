@@ -90,7 +90,7 @@ print("RESPONSE BODY: ${response.body}");
 
 
               String qrValueString = barcode.rawValue.toString();
-              int? qrValue = int.tryParse(qrValueString!);
+              int? qrValue = int.tryParse(qrValueString);
 
               List<String> parts = qrValueString.split('|');
 
@@ -110,7 +110,7 @@ print("RESPONSE BODY: ${response.body}");
                 await checkAttend(studentID!);
 
                 if (responsecode == 'Correct'){
-              Navigator.push(context, MaterialPageRoute(builder: (_) => Confirm(studentID: studentID!, staffID: staffID, studentName: studentName,)));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => Confirm(studentID: studentID, staffID: staffID, studentName: studentName,)));
 
                 }
                 else if (responsecode == 'Attendance Already taken'){

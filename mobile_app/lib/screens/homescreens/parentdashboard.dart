@@ -58,7 +58,7 @@ Future<void> getStudentForParent() async {
 
     final response = await http.get(
       Uri.parse(
-        'http://192.168.0.159:7205/api/MedsAdministered/parent/$parentId/student',
+        'http://localhost:7205/api/MedsAdministered/parent/$parentId/student',
       ),
     );
 
@@ -102,9 +102,8 @@ Future<void> getStudentForParent() async {
         children: [
           
           Padding(padding: EdgeInsets.only(left: 20, top: 20),
-          child: Align(child:           
+          child: Align(alignment: Alignment.centerLeft,child:           
             Text('Welcome', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,), ),
-            alignment: Alignment.centerLeft,
             ),
               ),
           

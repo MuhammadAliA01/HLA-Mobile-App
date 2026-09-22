@@ -242,7 +242,7 @@ Guidelines:
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: topics.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           return ActionChip(
             label: Text(topics[index]),
@@ -284,7 +284,7 @@ Guidelines:
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   )

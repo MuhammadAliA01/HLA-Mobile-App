@@ -163,7 +163,7 @@ class _ClassListState extends State<ClassList> {
                 );
                 
                 
-              }).toList(), 
+              }), 
               
               ]
           ),

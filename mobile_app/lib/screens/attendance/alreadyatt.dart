@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
 import 'package:mobile_app/screens/attendance/list.dart';
 import 'package:mobile_app/screens/attendance/qrcamera.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class Already extends StatelessWidget {
   const Already({super.key});

@@ -24,7 +24,7 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
 
   String? _lastClockInDate; // yyyy-MM-dd of the last successful clock-in, so we know if today is already used
 
-  static const String baseUrl = 'http://192.168.0.159:7205';
+  static const String baseUrl = 'http://localhost:7205';
 
   @override
   void initState() {

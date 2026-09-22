@@ -49,7 +49,7 @@ Future<void> registerUser(String idNum, String firstName, String lastName,String
     );
 
 
-print("Calling: https://localhost:7205/api/MobileAccount/register");  //
+print("Calling: http://localhost:7205/api/MobileAccount/register");  //
 print("Status: ${response.statusCode}");
   print("Body: ${response.body}");
 setState(() {
@@ -71,22 +71,18 @@ setState(() {
 
 
     return Scaffold(
-             backgroundColor: Colors.transparent,
+             backgroundColor: Colors.white,
                resizeToAvoidBottomInset: false,
 
       appBar: AppBar(
-        title: Text('Register'),
+        title: Text('Register', style: TextStyle(color: Colors.white),),
+                backgroundColor: const Color.fromARGB(255, 241, 182, 105),
+
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
               padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage('assets/imgs/loginBG.jpg'
-          ),
-          fit: BoxFit.cover
-          ),
-        ),
 
 
        child: Center(
@@ -95,7 +91,7 @@ setState(() {
            crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 50,
           children: [
-            Text('Register', style: GoogleFonts.manrope(fontSize: 40, color: const Color.fromARGB(255, 255, 255, 255))),
+            Text('Register', style: GoogleFonts.manrope(fontSize: 40, color: Colors.black)),
             if (errorMessage.isNotEmpty)
               Text(errorMessage),
             SizedBox( 
@@ -107,7 +103,7 @@ setState(() {
                 prefixIcon: Icon(Icons.account_circle_outlined),
                 hintText: 'ID Number',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.black)
                 
                 ),
                 
@@ -130,7 +126,7 @@ setState(() {
                 prefixIcon: Icon(Icons.account_circle_outlined),
                 hintText: 'First Name',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.black)
                 
                 ),
                 
@@ -153,7 +149,7 @@ setState(() {
                 prefixIcon: Icon(Icons.account_circle_outlined),
                 hintText: 'Last Name',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.black)
                 
                 ),
                 
@@ -176,7 +172,7 @@ setState(() {
                 prefixIcon: Icon(Icons.account_circle_outlined),
                 hintText: 'Username',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.black)
                 
                 ),
                 
@@ -199,7 +195,7 @@ setState(() {
                 prefixIcon: Icon(Icons.account_circle_outlined),
                 hintText: 'Email',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.black)
                 
                 ),
                 
@@ -217,12 +213,13 @@ setState(() {
               height: 50,
               width: 300,
                 child: TextField(
+                  obscureText: true,
              
               decoration: InputDecoration(
                prefixIcon: Icon(Icons.lock_outline),
                 hintText: 'Password',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-               borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.black)
 
                 ),
                      filled: true,
@@ -239,7 +236,7 @@ setState(() {
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 minimumSize: Size(300, 60),
-                backgroundColor: const Color(0xFF6c76cf)
+                backgroundColor: Colors.deepOrange
               ), child: Text('Create Account', style: GoogleFonts.notoSansAvestan(color: Colors.white, fontSize: 20),)   
           
 
@@ -248,7 +245,7 @@ setState(() {
               TextButton(onPressed: () {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Login()),);
 
-              }, child: Text('Dont have an Account? Register', style: GoogleFonts.averageSans(color: const Color.fromARGB(255, 161, 161, 230), fontSize: 13, fontWeight: FontWeight.bold),),
+              }, child: Text('Already have an account? Login', style: GoogleFonts.averageSans(color: Colors.deepOrange, fontSize: 13, fontWeight: FontWeight.bold),),
             
             ),
             

@@ -39,7 +39,7 @@ class _StaffSchedulePageState extends State<StaffSchedulePage> {
 
       final response = await http.get(
         Uri.parse(
-          "http://192.168.0.159:7205/api/MobileStaffSchedule/staff/$staffId",
+          "http://localhost:7205/api/MobileStaffSchedule/staff/$staffId",
         ),
         headers: {
           "Content-Type": "application/json",

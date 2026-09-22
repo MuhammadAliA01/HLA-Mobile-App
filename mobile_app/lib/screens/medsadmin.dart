@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'meds_qr_scanner.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mobile_app/screens/homescreens/parenthome.dart';
 
 void main() {
   runApp(MyApp());
@@ -222,7 +222,7 @@ class _MedsTrackingPageState extends State<MedsTrackingPage> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://192.168.0.159:7205/api/MedsAdministered/students',
+          'http://localhost:7205/api/MedsAdministered/students',
         ),
       );
 
@@ -267,7 +267,7 @@ final int teacherId = int.parse(staffId);
     try {
       final response = await http.post(
         Uri.parse(
-          'http://192.168.0.159:7205/api/MedsAdministered',
+          'http://localhost:7205/api/MedsAdministered',
         ),
         headers: {
           'Content-Type': 'application/json',
@@ -819,10 +819,10 @@ class ConfirmationScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Back to Student List'),
+
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => Parenthome()));  
+                                        },
+                  child: const Text('Back to Home'),
                 ),
               ),
             ],

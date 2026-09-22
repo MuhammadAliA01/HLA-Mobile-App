@@ -45,7 +45,7 @@ Future<void> checkLogin() async{
     return;
   }
 
-  if (JwtDecoder.isExpired(token!)){
+  if (JwtDecoder.isExpired(token)){
     await storage.delete(key: 'token');
 
     return;
@@ -86,9 +86,8 @@ Future<void> checkLogin() async{
         children: [
           
           Padding(padding: EdgeInsets.only(left: 20, top: 20),
-          child: Align(child:           
+          child: Align(alignment: Alignment.centerLeft,child:           
             Text('Welcome', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,), ),
-            alignment: Alignment.centerLeft,
             ),
               ),
           
@@ -300,28 +299,7 @@ Future<void> checkLogin() async{
           ),
          ),*/
 
-         InkWell( //code to log out. Commented out since not needed rn
-          onTap: () async {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => ParentHomeworkScreen()));
-            
-          },
-          child: Container(
-             width: 150,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(11),
-              border: Border.all(
-                color: Colors.grey
-              )
-            ),
-            child: Column(
-              
-              children: [
-                Icon(Icons.access_time, size: 50,),
-                Text('dgdgddg', style: TextStyle(fontSize: 20),)
-              ],
-            ),
-          ),
-         ),
+      
 
         
         ],

@@ -67,11 +67,10 @@ class _LogHealthScreenState extends State<LogHealthScreen> {
  // Temporary test data
 List<StudentHealthLog> _getDummyRoster() {
   return [
-    StudentHealthLog(studentId: "1", studentName: "Liam Smith"),
-    StudentHealthLog(studentId: "2", studentName: "Emma Johnson"),
-    StudentHealthLog(studentId: "3", studentName: "Noah Williams"),
-    StudentHealthLog(studentId: "4", studentName: "Olivia Brown"),
-    StudentHealthLog(studentId: "5", studentName: "Ava Jones"),
+    StudentHealthLog(studentId: "1", studentName: "Nazeem Shaik"),
+    StudentHealthLog(studentId: "2", studentName: "Ayaan Adam"),
+    StudentHealthLog(studentId: "3", studentName: "Uwais Rawat"),
+    StudentHealthLog(studentId: "4", studentName: "ismail"),
 
 
   ];
@@ -92,7 +91,7 @@ List<StudentHealthLog> _getDummyRoster() {
     }
 
     // Aligned endpoint path and removed classId query parameter
-    final uri = Uri.parse("http://192.168.0.159:7205/api/Students/GetTeacherStudents")
+    final uri = Uri.parse("http://localhost:7205/api/Students/GetTeacherStudents")
         .replace(queryParameters: {
       "teacherId": staffId,
     });

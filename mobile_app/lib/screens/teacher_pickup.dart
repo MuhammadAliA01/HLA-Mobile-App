@@ -31,7 +31,7 @@ class _TeacherPickupScreenState extends State<TeacherPickupScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("[http://192.168.0.159:7205/api/MobilePickup/verifydelegate]"),
+        Uri.parse("http://localhost:7205/api/MobilePickup/verifydelegate"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"delegateCode": code}),
       );

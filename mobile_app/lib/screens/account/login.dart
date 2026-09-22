@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
 
   final response = await http.post(
     Uri.parse(
-      'http://192.168.0.159:7205/api/MobileAccount/save-fcm-token',
+      'http://localhost:7205/api/MobileAccount/save-fcm-token',
     ),
     headers: {
       'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ class _LoginState extends State<Login> {
 Future<void> sendTestNotification(int userId) async {
   final response = await http.post(
     Uri.parse(
-      'http://192.168.0.159:7205/api/MobileAccount/test-notification',
+      'http://localhost:7205/api/MobileAccount/test-notification',
     ),
     headers: {
       'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ Future<void> sendTestNotification(int userId) async {
 
       final response = await http.post(
 
-     Uri.parse("http://192.168.0.159:7205/api/MobileAccount/Login"),
+     Uri.parse("http://localhost:7205/api/MobileAccount/Login"),
 
       headers: {
 
@@ -198,7 +198,7 @@ Future<void> sendTestNotification(int userId) async {
 
     return Scaffold(
 
-             backgroundColor: Colors.transparent,
+             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
                resizeToAvoidBottomInset: false,
 
@@ -206,69 +206,36 @@ Future<void> sendTestNotification(int userId) async {
 
       appBar: AppBar(
 
-        title: Text('Login'),
+        title: Text('Login', style: TextStyle(color: Colors.white),),
+        backgroundColor: const Color.fromARGB(255, 241, 182, 105),
 
       ),
 
-      body: SafeArea(
-
-        child: SingleChildScrollView(
+      
+        body: SingleChildScrollView(
+          
 
           child: Container(
-
-padding: EdgeInsets.all(20),
-
-        decoration: BoxDecoration(
-
-          image: DecorationImage(image: AssetImage('assets/imgs/loginBG.jpg'
-
-          ),
-
-          fit: BoxFit.cover
-
-          ),
-
-        ),
-
-
-
-
+              height: MediaQuery.of(context).size.height,
+            padding: EdgeInsets.all(20),
+        
 
        child: Center(
-
         child: Column(
-
-         
-
            crossAxisAlignment: CrossAxisAlignment.center,
-
           spacing: 40,
-
           children: [
-
-            Text('Welcome', style: GoogleFonts.manrope(fontSize: 50, color: const Color.fromARGB(255, 255, 255, 255))),
-
+            Text('Welcome', style: GoogleFonts.manrope(fontSize: 50, color: Colors.black)),
 
 
           if (errorMessage.isNotEmpty)
 
-            Text(errorMessage)
-
-       
-
-
-
-
-
-            ,
+            Text(errorMessage) ,
 
             SizedBox(
 
               height: 50,
-
-                            width: 300,
-
-
+                width: 300,
 
                 child: TextField(
 
@@ -280,7 +247,7 @@ padding: EdgeInsets.all(20),
 
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
 
-                borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.orange, width: 1)
 
                
 
@@ -315,6 +282,7 @@ padding: EdgeInsets.all(20),
               width: 300,
 
                 child: TextField(
+                  obscureText: true,
 
              
 
@@ -326,7 +294,7 @@ padding: EdgeInsets.all(20),
 
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
 
-               borderSide: BorderSide.none
+                borderSide: BorderSide(color: Colors.orange, width: 0.5,)
 
 
 
@@ -426,7 +394,7 @@ padding: EdgeInsets.all(20),
 
                 minimumSize: Size(300, 60),
 
-                backgroundColor: const Color(0xFF6c76cf)
+                backgroundColor: Colors.deepOrange
 
               ), child: Text('Login', style: GoogleFonts.notoSansAvestan(color: Colors.white, fontSize: 20),)  
 
@@ -440,7 +408,7 @@ padding: EdgeInsets.all(20),
 
 
 
-              TextButton(onPressed: () {Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Register()));}, child: Text('Dont have an Account? Register', style: GoogleFonts.averageSans(color: const Color.fromARGB(255, 161, 161, 230), fontSize: 13, fontWeight: FontWeight.bold),),
+              TextButton(onPressed: () {Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Register()));}, child: Text('Dont have an Account? Register', style: GoogleFonts.averageSans(color: Colors.deepOrange, fontSize: 13, fontWeight: FontWeight.bold),),
 
            
 
@@ -468,7 +436,7 @@ padding: EdgeInsets.all(20),
 
 
 
-      ),
+      
 
     );
 

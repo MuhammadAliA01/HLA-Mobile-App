@@ -86,7 +86,7 @@ class NotificationService {
   }) async {
     final response = await http.post(
       Uri.parse(
-        'http://192.168.0.159:7205/api/MobileAccount/save-fcm-token',
+        'http://localhost:7205/api/MobileAccount/save-fcm-token',
       ),
       headers: {
         'Content-Type': 'application/json',

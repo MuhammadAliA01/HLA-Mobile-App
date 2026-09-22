@@ -33,7 +33,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://192.168.0.159:7205/api/Activity/all',
+          'http://localhost:7205/api/Activity/all',
         ),
       );
 
@@ -102,7 +102,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
 
       final response = await http.post(
         Uri.parse(
-          'http://192.168.0.159:7205/api/Activity/create',
+          'http://localhost:7205/api/Activity/create',
         ),
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Activity'),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color.fromARGB(255, 241, 182, 105),
         foregroundColor: Colors.white,
       ),
 
