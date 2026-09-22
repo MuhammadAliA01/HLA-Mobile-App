@@ -52,7 +52,7 @@ class _OvertimeRequestScreenState extends State<OvertimeRequestScreen> {
       if (staffIdStr == null) throw Exception("User not logged in.");
 
       final response = await http.post(
-        Uri.parse('http://192.168.0.159:7205/api/Overtime/Submit'),
+        Uri.parse('http://localhost:7205/api/Overtime/Submit'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

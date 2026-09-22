@@ -1,3 +1,4 @@
+import 'package:mobile_app/screens/submit_leave_screen.dart';
 import 'package:mobile_app/screens/submit_overtime_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
@@ -255,6 +256,50 @@ Future<void> checkLogin() async{
                     children: [
                       Icon(Icons.car_crash_sharp, size: 50, color: Colors.deepOrange,),
                       Text('Confirm Pickup', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
+                    ],
+                  ),
+                )
+                
+                
+                
+                
+              ],
+            ),
+
+          ),
+          ),
+
+          InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => SubmitLeaveScreen()));
+            },
+          child:  Ink(
+            width: 400,
+            height: 200,
+            decoration: BoxDecoration(
+              
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(
+                color: Colors.transparent,
+                width: 2
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8
+                )
+              ]
+            ),
+            child: Column(
+              children: [
+                Expanded(child: 
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.leave_bags_at_home, size: 50, color: Colors.deepOrange,),
+                      Text('Request Leave', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
                     ],
                   ),
                 )
