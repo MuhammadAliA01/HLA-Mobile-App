@@ -1,3 +1,4 @@
+import 'package:mobile_app/screens/submit_overtime_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/main.dart';
 import 'package:mobile_app/screens/homescreens/parenthome.dart';
@@ -300,7 +301,40 @@ Future<void> checkLogin() async{
          ),*/
 
       
-
+InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const OvertimeRequestScreen()));
+            },
+          child:  Ink(
+            width: 400,
+            height: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(color: Colors.transparent, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8
+                )
+              ]
+            ),
+            child: Column(
+              children: [
+                Expanded(child: 
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.more_time, size: 50, color: Colors.deepOrange,),
+                      Text('Request Overtime', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+         ),
         
         ],
       ),
